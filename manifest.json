@@ -1,7 +1,7 @@
 {
-  "name": "İki Zihin — Sahnede Sohbet & Münazara",
-  "short_name": "İki Zihin",
-  "description": "İki yapay zekayı bir konuda karşı karşıya getirin ya da telif hakkı olmayan bir kitabı okutup tartıştırın.",
+  "name": "Dualog — AI Minds in Endless Spoken Dialogue",
+  "short_name": "Dualog",
+  "description": "Two AI minds in spoken philosophical debate, engineering discourse, and literary performances.",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#14161c",
