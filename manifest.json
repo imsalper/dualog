@@ -1,0 +1,16 @@
+{
+  "name": "İki Zihin — Sahnede Sohbet & Münazara",
+  "short_name": "İki Zihin",
+  "description": "İki yapay zekayı bir konuda karşı karşıya getirin ya da telif hakkı olmayan bir kitabı okutup tartıştırın.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#14161c",
+  "theme_color": "#14161c",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
