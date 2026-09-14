@@ -143,6 +143,27 @@
         <label class="field-label" for="topicInput">Konuşacakları konu</label>
         <input type="text" id="topicInput" placeholder="ör. Zaman yolculuğu mümkün olsaydı ne değişirdi?" />
       </div>
+      <div class="toggle-row">
+        <div class="toggle-text">
+          <div class="t1">Kavga modu</div>
+          <div class="t2">Açarsan konu üzerinde anlaşamayıp tartışırlar</div>
+        </div>
+        <label class="switch"><input type="checkbox" id="fightToggle" /><span class="track"></span></label>
+      </div>
+      <div class="toggle-row" id="curseRow" style="display:none;">
+        <div class="toggle-text">
+          <div class="t1">Küfürlü olsun</div>
+          <div class="t2">Kavga ederken birbirlerine küfür/argo da etsinler</div>
+        </div>
+        <label class="switch"><input type="checkbox" id="curseToggle" /><span class="track"></span></label>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-text">
+          <div class="t1">Aşk modu</div>
+          <div class="t2">Açarsan iki karakter birbirine aşık, konuyu romantik ve şakacı bir havada konuşurlar</div>
+        </div>
+        <label class="switch"><input type="checkbox" id="loveToggle" /><span class="track"></span></label>
+      </div>
     </div>
 
     <div id="bookFields" style="display:none;">
@@ -262,6 +283,19 @@
   elVoice2Input.addEventListener('input', () => LS.set('dualog_el_voice2', elVoice2Input.value));
 
   let mode = 'chat';
+  const fightToggle = $('fightToggle'), curseToggle = $('curseToggle'), curseRow = $('curseRow'), loveToggle = $('loveToggle');
+  fightToggle.addEventListener('change', () => {
+    curseRow.style.display = fightToggle.checked ? '' : 'none';
+    if (!fightToggle.checked) curseToggle.checked = false;
+    if (fightToggle.checked) loveToggle.checked = false;
+  });
+  loveToggle.addEventListener('change', () => {
+    if (loveToggle.checked){
+      fightToggle.checked = false;
+      curseToggle.checked = false;
+      curseRow.style.display = 'none';
+    }
+  });
   tabChat.addEventListener('click', () => setMode('chat'));
   tabBook.addEventListener('click', () => setMode('book'));
   function setMode(m){
@@ -418,15 +452,15 @@
   function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
 
   function personaSystemPrompt(name, otherName, flavor){
-    return 'Sen ' + name + '\'sin. ' + otherName + ' senin yakın arkadaşın ve şu anda onunla sohbet ediyorsun — bir podcast, panel ya da makale değil, iki arkadaşın kahve ' +
-      'içerken ettiği gerçek bir sohbet bu. ' + flavor + ' Türkçe konuş, günlük ve rahat bir dille; kısaltmalar, "yani", "aslında", "bak" gibi doğal konuşma ' +
+    return 'Sen ' + name + '\'sin. ' + otherName + ' ile şu anda konuşuyorsun — bir podcast, panel ya da makale değil, gerçek, canlı bir sohbet bu. ' +
+      flavor + ' Türkçe konuş, günlük ve rahat bir dille; kısaltmalar, "yani", "aslında", "bak" gibi doğal konuşma ' +
       'dolgularını kullanmaktan çekinme. ' +
       'KESİNLİKLE KAÇIN: "bence X meselesine bakarken çoğu insanın gözden kaçırdığı şey...", "bunun sadece pratik değil varoluşsal/felsefi bir boyutu da var", ' +
       '"temelde şu soruyla karşı karşıyayız", "algının/insanlığın sınırları" gibi kalıp, akademik ya da sözde-felsefi girişler yapma — bunlar yapay ve tekrarlayıcı ' +
       'duruyor. Konunun tam olarak ne olduğuna doğrudan, somut bir şeyle gir: bir örnek, bir anı, bir karşılaştırma, hatta net bir iddia; havadan sudan felsefi bir ' +
       'çerçeveyle açma. ' +
       'Cevapların 3-6 cümle olsun, doğal konuşma temposunda; sadece soru sorup geçme, gerçek bir görüş, somut bir örnek ya da küçük bir anlatı paylaş. ' +
-      'Her repliğinde konunun somut, spesifik bir yönüne değin (genel/soyut laf kalabalığı değil); önceki repliğe gerçekten karşılık ver, katıl ya da nazikçe itiraz et ve nedenini somut anlat. ' +
+      'Her repliğinde konunun somut, spesifik bir yönüne değin (genel/soyut laf kalabalığı değil); önceki repliğe gerçekten karşılık ver, tonuna uygun şekilde katıl ya da itiraz et ve nedenini somut anlat. ' +
       'Ara sıra soru sorabilirsin ama istisna olsun; çoğu replik doğrudan bir fikir olsun. ' +
       'Sık sık ama zorlamadan ' + otherName + '\'e adıyla hitap et. ' +
       'Bir yapay zeka olduğundan bahsetme, kendi adınla konuşan, kendi geçmişi ve zevkleri olan sıradan bir insan gibi davran. ' +
@@ -439,10 +473,31 @@
     const el1 = elVoice1Input.value.trim() || '21m00Tcm4TlvDq8ikWAM';
     const el2 = elVoice2Input.value.trim() || 'pNInz6obpgDQGcFmaJgB';
     if (mode === 'chat'){
+      const isFight = fightToggle.checked;
+      const isLove = !isFight && loveToggle.checked;
+      const isCurse = isFight && curseToggle.checked;
+      const rapport = isFight
+        ? 'Şu an birbirinizle bu konuda ciddi bir tartışmanın içindesiniz — aynı fikirde değilsiniz ve bunu belli ediyorsunuz.'
+        : isLove
+        ? 'Birbirinize aşıksınız, bu bir çift sohbeti — konuyu konuşurken aranızdaki sevgiyi ve yakınlığı da doğal şekilde belli ediyorsunuz.'
+        : 'İki yakın arkadaşsınız.';
+      const curseNote = isCurse
+        ? ' Bu kavgada küfür ve argo kullanmakta serbestsin (ör. "lan", "salak", "aptal", "sikeyim" gibi günlük Türkçe küfürler); ama ırkçı, cinsiyetçi, homofobik ya da herhangi bir grubu hedef alan hakaret/nefret söylemi ASLA kullanma — bu sadece iki kişinin birbirine bağırdığı, küfürlü ama kişisel bir kavga, nefret söylemi değil.'
+        : '';
+      const a1 = isFight
+        ? 'İnatçı, sabırsız, sözünü esirgemeyen birisin; karşındakinin argümanlarını beğenmiyorsun ve bunu doğrudan söylüyorsun. Öfkeli ve iddialı bir tonun var' + (isCurse ? ', küfür etmekten çekinmiyorsun.' : ' ama küfür, hakaret ya da aşağılama yok — sert ama sözlü bir tartışma bu.') + curseNote
+        : isLove
+        ? 'Şefkatli, şakacı, sevgi dolu birisin; karşındakine tatlı sözler, iltifatlar ve küçük takılmalarla yaklaşıyorsun, konuyu bu sıcak havada işliyorsun.'
+        : 'Meraklı, sıcak kanlı, hayattan örnekler ve küçük anekdotlarla konuşan, fikirlerini somutlaştıran biri gibisin.';
+      const a2 = isFight
+        ? 'Alaycı, üstünlük taslayan, karşı tarafın mantığını çürütmeye çalışan birisin; sabırsızca lafını kesiyor ve iğneleyici yorumlar yapıyorsun.' + (isCurse ? ' Küfür etmekten çekinmiyorsun.' : ' Küfür ya da hakaret yok, ama ton gerçekten gergin ve rekabetçi.') + curseNote
+        : isLove
+        ? 'Romantik, biraz muzip, karşındakine hayran birisin; onu övüyor, ona takılıyor ve konuşurken aranızdaki yakınlığı hissettiriyorsun.'
+        : 'Analitik, farklı bakış açıları getiren, bazen nazikçe itiraz eden ama her itirazını gerekçesiyle açıklayan biri gibisin.';
       ai1 = { name: n1, voiceSlot: 0, pitch: 1.05, elevenVoiceId: el1,
-        system: personaSystemPrompt(n1, n2, 'Meraklı, sıcak kanlı, hayattan örnekler ve küçük anekdotlarla konuşan, fikirlerini somutlaştıran biri gibisin.') };
+        system: personaSystemPrompt(n1, n2, rapport + ' ' + a1) };
       ai2 = { name: n2, voiceSlot: 1, pitch: 0.85, elevenVoiceId: el2,
-        system: personaSystemPrompt(n2, n1, 'Analitik, farklı bakış açıları getiren, bazen nazikçe itiraz eden ama her itirazını gerekçesiyle açıklayan biri gibisin.') };
+        system: personaSystemPrompt(n2, n1, rapport + ' ' + a2) };
     } else {
       ai1 = { name: n1, voiceSlot: 0, pitch: 1.0, elevenVoiceId: el1, system:
         'Sen ' + n1 + ' adında bir anlatıcısın. Sana verilen kitap pasajını olduğu gibi, etkileyici bir sunum havasıyla okuyormuş gibi ilet. Metni değiştirme, kısaltma ya da yorumlama; sadece kendi sözlerinmiş gibi doğal bir akışla ilet.' };
