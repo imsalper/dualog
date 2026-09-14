@@ -2,632 +2,330 @@
 <html lang="tr">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-<title>Dualog — AI Minds in Spoken Dialogue & Debate</title>
-<meta name="description" content="İki yapay zekayı sahnede karşı karşıya getirin. Siz dur diyene kadar kesintisiz felsefi münazara, mühendislik tartışmaları ve radyo tiyatrosu." />
-<meta name="theme-color" content="#12141a" />
-<link rel="icon" type="image/png" href="icon.png" />
-<link rel="apple-touch-icon" href="icon.png" />
-<link rel="manifest" href="manifest.json" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dualog — sahnede sohbet</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500;600;700;800&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#12141a;
-    --surface:#1a1d26;
-    --surface-2:#232734;
-    --border:#313647;
-    --border-soft:#262a38;
-    --text:#ece9e1;
-    --text-muted:#969bb0;
-    --text-faint:#5e6478;
-    --ai1:#e5a93c;
-    --ai1-glow:rgba(229,169,60,0.25);
-    --ai2:#4ebcb0;
-    --ai2-glow:rgba(78,188,176,0.25);
-    --danger:#e0645a;
-    --danger-soft:#3a2220;
-    --radius:16px;
-    --emerald:#10b981;
+    --bg:#14161c; --surface:#1c1f28; --surface-2:#252934; --border:#333849; --border-soft:#2a2e3a;
+    --text:#ece9e1; --text-muted:#9297a6; --text-faint:#5c6172;
+    --ai1:#e3a548; --ai1-soft:#241f16; --ai2:#54b8ab; --ai2-soft:#152420;
+    --danger:#e0645a; --danger-soft:#3a2220; --ok:#7fbf95; --radius:14px;
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
   body{
-    background:radial-gradient(ellipse 1000px 650px at 50% -12%, #1e2436 0%, var(--bg) 65%);
-    color:var(--text);
-    font-family:'Inter',sans-serif;
-    min-height:100vh;
-    padding:24px 16px 64px;
+    background:radial-gradient(ellipse 900px 600px at 50% -10%, #1e2230 0%, var(--bg) 60%);
+    color:var(--text); font-family:'Inter',sans-serif; min-height:100vh; padding:32px 16px 64px;
   }
-  .app{ max-width:780px; margin:0 auto; }
+  .app{ max-width:720px; margin:0 auto; }
+  .masthead{ text-align:center; margin-bottom:28px; }
+  .masthead h1{ font-family:'Newsreader', serif; font-weight:500; font-size:40px; letter-spacing:-0.01em; margin:0 0 8px; }
+  .masthead p{ color:var(--text-muted); font-size:15px; margin:0; line-height:1.6; }
+  .card{ background:var(--surface); border:1px solid var(--border-soft); border-radius:var(--radius); padding:24px; margin-bottom:16px; }
+  .card h2{ font-family:'Newsreader',serif; font-weight:500; font-size:19px; margin:0 0 4px; }
+  .card .sub{ color:var(--text-faint); font-size:12.5px; margin:0 0 18px; line-height:1.5; }
 
-  /* Top Navigation Bar */
-  .top-bar{
-    display:flex; justify-content:space-between; align-items:center; margin-bottom:28px;
-    padding-bottom:14px; border-bottom:1px solid var(--border-soft);
-  }
-  .brand-badge{
-    display:flex; align-items:center; gap:10px; text-decoration:none; color:var(--text);
-  }
-  .brand-logo-img{
-    width:36px; height:36px; border-radius:10px; border:1px solid var(--border);
-    box-shadow:0 0 16px rgba(78,188,176,0.25);
-  }
-  .brand-title{
-    font-family:'Outfit',sans-serif; font-size:21px; font-weight:800; letter-spacing:-0.5px;
-    background:linear-gradient(135deg, #ffffff 40%, #a1a1aa 100%);
-    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-  }
-  .top-actions{ display:flex; align-items:center; gap:10px; }
-  .top-btn{
-    display:inline-flex; align-items:center; gap:6px;
-    background:var(--surface); border:1px solid var(--border-soft);
-    color:var(--text-muted); font-size:12.5px; font-weight:600;
-    padding:8px 14px; border-radius:10px; cursor:pointer;
-    transition:all .15s ease;
-  }
-  .top-btn:hover{
-    background:var(--surface-2); color:var(--text); border-color:var(--border); transform:translateY(-1px);
-  }
-  .api-status-pill{
-    display:inline-flex; align-items:center; gap:7px;
-    background:rgba(229,169,60,0.12); border:1px solid rgba(229,169,60,0.3);
-    color:#f3b45a; font-size:12px; font-weight:600; padding:6px 12px; border-radius:30px;
-  }
-  .api-status-pill.live{
-    background:rgba(16,185,129,0.12); border-color:rgba(16,185,129,0.3); color:#34d399;
-  }
-  .api-dot{ width:7px; height:7px; border-radius:50%; background:currentColor; }
-
-  /* Hero Masthead */
-  .masthead{ text-align:center; margin-bottom:32px; }
-  .masthead h1{
-    font-family:'Newsreader', serif;
-    font-weight:500;
-    font-size:46px;
-    letter-spacing:-0.02em;
-    margin:0 0 10px;
-    color:var(--text);
-  }
-  .masthead p{
-    color:var(--text-muted); font-size:15px; margin:0 auto; line-height:1.65; max-width:620px;
-  }
-
-  .card{
-    background:var(--surface);
-    border:1px solid var(--border-soft);
-    border-radius:var(--radius);
-    padding:28px;
-    box-shadow:0 20px 48px rgba(0,0,0,0.4);
-  }
-
-  .tabs{ display:flex; gap:8px; margin-bottom:24px; }
+  .tabs{ display:flex; gap:8px; margin-bottom:20px; }
   .tab{
-    flex:1; padding:13px 18px; border-radius:12px; border:1px solid var(--border-soft);
+    flex:1; padding:11px 16px; border-radius:10px; border:1px solid var(--border-soft);
     background:transparent; color:var(--text-muted); font-family:'Inter',sans-serif;
-    font-size:14px; font-weight:600; cursor:pointer; transition:all .15s ease;
-    display:flex; align-items:center; justify-content:center; gap:8px;
+    font-size:14px; font-weight:500; cursor:pointer; transition:background .15s,color .15s,border-color .15s;
   }
   .tab.active{ background:var(--surface-2); color:var(--text); border-color:var(--border); }
-  .tab:hover:not(.active){ background:#212532; color:var(--text); }
+  .tab:hover:not(.active){ background:#20232c; }
 
-  label.field-label{ display:block; font-size:13px; color:var(--text-muted); margin:0 0 8px; font-weight:600; }
-  .field{ margin-bottom:20px; }
-  input[type=text], textarea, select{
+  label.field-label{ display:block; font-size:13px; color:var(--text-muted); margin:0 0 8px; }
+  .field{ margin-bottom:16px; }
+  input[type=text], input[type=password], textarea, select{
     width:100%; background:var(--surface-2); border:1px solid var(--border-soft); border-radius:10px;
-    color:var(--text); font-family:'Inter',sans-serif; font-size:15px; padding:12px 14px;
+    color:var(--text); font-family:'Inter',sans-serif; font-size:14.5px; padding:11px 13px;
     outline:none; resize:vertical; transition:border-color .15s;
   }
-  input[type=text]:focus, textarea:focus, select:focus{ border-color:var(--border); }
-  textarea#bookText{ min-height:160px; line-height:1.65; font-family:'Newsreader',serif; font-size:16px; }
-  textarea#bookText::placeholder, input::placeholder{ color:var(--text-faint); font-family:'Inter',sans-serif; font-size:14px; }
+  select{ appearance:none; cursor:pointer; }
+  input:focus, textarea:focus, select:focus{ border-color:var(--text-faint); }
+  textarea#bookText{ min-height:170px; line-height:1.6; }
+  textarea::placeholder, input::placeholder{ color:var(--text-faint); }
+  .row2{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  @media (max-width:520px){ .row2{ grid-template-columns:1fr; } }
+  .hint{ font-size:12px; color:var(--text-faint); margin-top:6px; line-height:1.5; }
+  .hint a{ color:#9db6e0; }
+  .warn{ font-size:12px; color:#e0b45a; margin-top:6px; line-height:1.5; }
+  .ok-badge{ display:inline-flex; align-items:center; gap:6px; font-size:12px; color:var(--ok); }
+  .ok-badge .dot{ width:6px; height:6px; border-radius:50%; background:var(--ok); }
 
-  /* Preset Pills */
-  .presets-wrapper{ margin-bottom:18px; }
-  .presets-title{ font-size:11.5px; color:var(--text-faint); margin-bottom:8px; font-weight:700; text-transform:uppercase; letter-spacing:0.6px; }
-  .preset-pills{ display:flex; gap:8px; flex-wrap:wrap; }
-  .preset-pill{
-    background:var(--surface-2); border:1px solid var(--border-soft); color:var(--text-muted);
-    font-size:12.5px; font-weight:500; padding:7px 13px; border-radius:20px; cursor:pointer; transition:all .15s ease;
-    white-space:nowrap;
-  }
-  .preset-pill:hover{
-    background:#2b3040; color:var(--text); border-color:var(--border); transform:translateY(-1px);
-  }
-
-  .name-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:22px; }
-  @media (max-width:540px){ .name-grid{ grid-template-columns:1fr; } }
-  .name-slot{ padding:14px; border-radius:12px; background:var(--surface-2); border:1px solid var(--border-soft); }
+  .name-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:6px; }
+  @media (max-width:520px){ .name-grid{ grid-template-columns:1fr; } }
+  .name-slot{ padding:12px; border-radius:10px; background:var(--surface-2); border:1px solid var(--border-soft); }
   .name-slot .dot{ width:9px; height:9px; border-radius:50%; display:inline-block; margin-right:7px; }
-  .name-slot input{ margin-top:8px; }
 
-  .toggle-row{
-    display:flex; align-items:center; justify-content:space-between; gap:12px;
-    padding:13px 4px; border-top:1px solid var(--border-soft);
-  }
+  .toggle-row{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 4px; border-top:1px solid var(--border-soft); }
   .toggle-row:first-of-type{ border-top:none; }
-  .toggle-row .toggle-text .t1{ font-size:14px; color:var(--text); font-weight:600; }
-  .toggle-row .toggle-text .t2{ font-size:12.5px; color:var(--text-faint); margin-top:3px; }
-  .switch{ position:relative; width:44px; height:24px; flex:none; }
+  .toggle-row .toggle-text .t1{ font-size:14px; color:var(--text); }
+  .toggle-row .toggle-text .t2{ font-size:12.5px; color:var(--text-faint); margin-top:2px; }
+  .switch{ position:relative; width:42px; height:24px; flex:none; }
   .switch input{ opacity:0; width:0; height:0; }
-  .switch .track{
-    position:absolute; inset:0; background:#373c4c; border-radius:999px; cursor:pointer; transition:background .15s;
-  }
-  .switch .track::before{
-    content:''; position:absolute; width:18px; height:18px; left:3px; top:3px; background:#c9cbd3;
-    border-radius:50%; transition:transform .15s;
-  }
-  .switch input:checked + .track{ background:#2b784f; }
-  .switch input:checked + .track::before{ transform:translateX(20px); background:#ffffff; }
+  .switch .track{ position:absolute; inset:0; background:#3a3f4d; border-radius:999px; cursor:pointer; transition:background .15s; }
+  .switch .track::before{ content:''; position:absolute; width:18px; height:18px; left:3px; top:3px; background:#c9cbd3; border-radius:50%; transition:transform .15s; }
+  .switch input:checked + .track{ background:#4a7a5e; }
+  .switch input:checked + .track::before{ transform:translateX(18px); background:#e7f3ea; }
 
   .primary-btn{
-    width:100%; margin-top:24px; padding:15px 20px; border-radius:12px; border:none;
-    background:#ffffff; color:#0f1117; font-family:'Inter',sans-serif; font-weight:700; font-size:15.5px;
-    cursor:pointer; transition:all .15s ease; display:flex; align-items:center; justify-content:center; gap:9px;
-    box-shadow:0 4px 18px rgba(255,255,255,0.15);
+    width:100%; margin-top:8px; padding:14px 20px; border-radius:10px; border:none;
+    background:var(--text); color:#181a20; font-weight:600; font-size:15px; cursor:pointer; transition:opacity .15s;
   }
-  .primary-btn:hover{ opacity:.94; transform:translateY(-1px); box-shadow:0 8px 24px rgba(255,255,255,0.22); }
-  .primary-btn:disabled{ opacity:.4; cursor:not-allowed; transform:none; }
-  .hint{ font-size:12.5px; color:var(--text-faint); margin-top:11px; line-height:1.5; text-align:center; }
+  .primary-btn:hover{ opacity:.88; }
+  .primary-btn:disabled{ opacity:.4; cursor:not-allowed; }
 
-  /* STAGE PANEL */
   #stagePanel{ display:none; }
-  .stage-topic{
-    text-align:center; color:var(--text); font-size:16px; font-weight:600;
-    margin-bottom:20px; padding:12px 18px; background:var(--surface-2); border-radius:12px;
-    border:1px solid var(--border-soft); display:flex; align-items:center; justify-content:space-between;
-  }
-  .turn-counter{
-    font-size:12px; font-weight:700; color:var(--text-faint); background:var(--surface);
-    padding:4px 10px; border-radius:12px; border:1px solid var(--border-soft);
-  }
-
-  .panels{ display:flex; flex-direction:column; gap:16px; margin-bottom:18px; }
-  .speaker-panel{
-    border-radius:14px; border:1px solid var(--border-soft); background:var(--surface-2);
-    transition:border-color .2s, box-shadow .2s; overflow:hidden;
-  }
-  .speaker-panel.active.p1{
-    border-color:var(--ai1); box-shadow:0 0 0 1px var(--ai1) inset, 0 10px 28px var(--ai1-glow);
-  }
-  .speaker-panel.active.p2{
-    border-color:var(--ai2); box-shadow:0 0 0 1px var(--ai2) inset, 0 10px 28px var(--ai2-glow);
-  }
-  .speaker-head{
-    display:flex; align-items:center; gap:10px; padding:13px 18px; border-bottom:1px solid var(--border-soft);
-    font-family:'Newsreader',serif; font-size:18px; font-weight:500;
-  }
-  .speaker-head .dot{ width:10px; height:10px; border-radius:50%; }
-  .speaker-head .live-tag{
-    margin-left:auto; font-family:'Inter',sans-serif; font-size:12px; color:var(--text-faint);
-    opacity:0; transition:opacity .15s; font-weight:700; display:flex; align-items:center; gap:6px;
-  }
+  .stage-topic{ text-align:center; color:var(--text-muted); font-size:13px; margin-bottom:18px; }
+  .panels{ display:flex; flex-direction:column; gap:14px; margin-bottom:16px; }
+  .speaker-panel{ border-radius:12px; border:1px solid var(--border-soft); background:var(--surface-2); transition:border-color .2s, box-shadow .2s; overflow:hidden; }
+  .speaker-panel.active.p1{ border-color:var(--ai1); box-shadow:0 0 0 1px var(--ai1) inset; }
+  .speaker-panel.active.p2{ border-color:var(--ai2); box-shadow:0 0 0 1px var(--ai2) inset; }
+  .speaker-head{ display:flex; align-items:center; gap:8px; padding:10px 16px; border-bottom:1px solid var(--border-soft); font-family:'Newsreader',serif; font-size:16px; }
+  .speaker-head .dot{ width:9px; height:9px; border-radius:50%; }
+  .speaker-head .live-tag{ margin-left:auto; font-family:'Inter',sans-serif; font-size:11.5px; color:var(--text-faint); opacity:0; transition:opacity .15s; }
   .speaker-panel.active .live-tag{ opacity:1; }
   .p1 .speaker-head .live-tag{ color:var(--ai1); }
   .p2 .speaker-head .live-tag{ color:var(--ai2); }
-
-  /* Sound Wave Bars */
-  .wave-bars{ display:inline-flex; align-items:flex-end; gap:2.5px; height:13px; }
-  .wave-bar{ width:2.5px; background:currentColor; border-radius:2px; animation:wave 0.8s ease-in-out infinite alternate; }
-  .wave-bar:nth-child(2){ animation-delay:0.25s; height:9px; }
-  .wave-bar:nth-child(3){ animation-delay:0.5s; height:13px; }
-  @keyframes wave{ 0%{ height:3px; } 100%{ height:13px; } }
-
-  .speaker-body{
-    padding:16px 18px; max-height:28vh; overflow-y:auto; display:flex; flex-direction:column; gap:12px;
-  }
+  .speaker-body{ padding:14px 16px; max-height:26vh; overflow-y:auto; display:flex; flex-direction:column; gap:10px; }
   .speaker-body::-webkit-scrollbar{ width:6px; }
   .speaker-body::-webkit-scrollbar-thumb{ background:var(--border); border-radius:6px; }
-  .speaker-body .line{
-    margin:0; font-family:'Newsreader',serif; font-size:17.5px; line-height:1.7; color:var(--text);
-    padding-bottom:10px; border-bottom:1px solid var(--border-soft);
-  }
+  .speaker-body .line{ margin:0; font-family:'Newsreader',serif; font-size:16px; line-height:1.6; color:var(--text); padding-bottom:8px; border-bottom:1px solid var(--border-soft); }
   .speaker-body .line:last-child{ border-bottom:none; padding-bottom:0; }
-  .speaker-body .placeholder{ font-family:'Inter',sans-serif; font-size:13.5px; color:var(--text-faint); }
+  .speaker-body .placeholder{ font-family:'Inter',sans-serif; font-size:13px; color:var(--text-faint); }
 
-  /* Moderator Interjection Bar */
-  .moderator-bar{
-    margin-top:14px; margin-bottom:16px; display:flex; gap:8px;
-  }
-  .moderator-bar input{
-    flex:1; padding:11px 14px; font-size:14px; background:var(--bg); border:1px solid var(--border);
-  }
-  .moderator-bar button{
-    padding:11px 18px; background:var(--surface-2); border:1px solid var(--border);
-    color:var(--text); border-radius:10px; font-size:13.5px; font-weight:600; cursor:pointer;
-    transition:all .15s ease; white-space:nowrap;
-  }
-  .moderator-bar button:hover{ background:#2d3342; border-color:var(--text-faint); }
+  .status-line{ display:flex; align-items:center; gap:8px; font-size:13px; color:var(--text-muted); min-height:20px; margin-bottom:14px; }
+  .status-dot{ width:7px; height:7px; border-radius:50%; background:var(--text-faint); }
+  .status-line.live .status-dot{ background:var(--ok); box-shadow:0 0 0 3px rgba(127,191,149,.15); }
 
-  .status-line{
-    display:flex; align-items:center; gap:8px; font-size:13.5px; color:var(--text-muted); min-height:24px; margin-bottom:16px;
-  }
-  .status-dot{ width:8px; height:8px; border-radius:50%; background:var(--text-faint); }
-  .status-line.live .status-dot{ background:#34d399; box-shadow:0 0 0 4px rgba(52,211,153,0.18); animation:pulse 1.8s infinite; }
-  @keyframes pulse{ 0%,100%{ opacity:1; } 50%{ opacity:0.4; } }
-
-  .stage-controls{
-    display:flex; align-items:center; gap:10px; flex-wrap:wrap; padding-top:16px; border-top:1px solid var(--border-soft);
-  }
-  .stop-btn{
-    padding:11px 24px; border-radius:10px; border:1px solid #5a3330; background:var(--danger-soft); color:#f0a49d;
-    font-family:'Inter',sans-serif; font-weight:700; font-size:14px; cursor:pointer; transition:all .15s ease;
-  }
-  .stop-btn:hover{ background:#472926; }
+  .stage-controls{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; padding-top:16px; border-top:1px solid var(--border-soft); }
+  .stop-btn{ padding:11px 20px; border-radius:10px; border:1px solid #5a3330; background:var(--danger-soft); color:#f0a49d; font-weight:600; font-size:14px; cursor:pointer; }
+  .stop-btn:hover{ background:#452724; }
   .stop-btn:disabled{ opacity:.4; cursor:not-allowed; }
-  .ghost-btn{
-    padding:11px 16px; border-radius:10px; border:1px solid var(--border-soft); background:transparent;
-    color:var(--text-muted); font-family:'Inter',sans-serif; font-size:13.5px; font-weight:500; cursor:pointer;
-    transition:all .15s ease;
-  }
-  .ghost-btn:hover{ background:var(--surface-2); color:var(--text); border-color:var(--border); }
+  .ghost-btn{ padding:11px 16px; border-radius:10px; border:1px solid var(--border-soft); background:transparent; color:var(--text-muted); font-size:13.5px; cursor:pointer; }
+  .ghost-btn:hover{ background:var(--surface-2); }
   .mini-toggle{ display:flex; align-items:center; gap:8px; font-size:13px; color:var(--text-muted); margin-left:auto; }
-
   .note{ font-size:12.5px; color:var(--text-faint); margin-top:14px; line-height:1.6; text-align:center; }
-
-  /* Settings Modal */
-  .modal-overlay{
-    position:fixed; inset:0; background:rgba(0,0,0,0.78); backdrop-filter:blur(6px);
-    z-index:999; display:none; align-items:center; justify-content:center; padding:16px;
-  }
-  .modal-overlay.show{ display:flex; }
-  .modal-box{
-    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
-    max-width:540px; width:100%; padding:26px; box-shadow:0 24px 60px rgba(0,0,0,0.55);
-    max-height:90vh; overflow-y:auto;
-  }
-  .modal-header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
-  .modal-header h3{ margin:0; font-size:19px; color:var(--text); font-weight:700; }
-  .modal-close{ background:transparent; border:none; color:var(--text-muted); font-size:22px; cursor:pointer; }
-  .modal-close:hover{ color:var(--text); }
-  .modal-field{ margin-bottom:18px; }
-  .modal-field label{ display:block; font-size:13px; color:var(--text-muted); margin-bottom:6px; font-weight:600; }
-  .modal-field select, .modal-field input{
-    width:100%; padding:11px 13px; background:var(--surface-2); border:1px solid var(--border-soft);
-    border-radius:10px; color:var(--text); font-size:14px; outline:none;
-  }
-  .voice-test-row{ display:flex; gap:8px; margin-top:6px; }
-  .voice-test-btn{
-    padding:8px 14px; background:var(--surface-2); border:1px solid var(--border); border-radius:8px;
-    color:var(--text); font-size:12px; cursor:pointer; font-weight:600; transition:all .15s;
-  }
-  .voice-test-btn:hover{ background:#2e3444; border-color:var(--text-muted); }
-
-  .modal-actions{ display:flex; justify-content:flex-end; gap:10px; margin-top:24px; padding-top:14px; border-top:1px solid var(--border-soft); }
-  .modal-save-btn{
-    padding:11px 22px; background:#10b981; color:#03291b; border:none; border-radius:10px;
-    font-weight:700; font-size:14px; cursor:pointer; transition:opacity .15s;
-  }
-  .modal-save-btn:hover{ opacity:0.9; }
-
-  /* Toast Notification */
-  .toast{
-    position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
-    background:#1c202c; border:1px solid var(--border); color:var(--text);
-    padding:11px 20px; border-radius:30px; font-size:13.5px; font-weight:600;
-    box-shadow:0 14px 35px rgba(0,0,0,0.55); z-index:1000; opacity:0;
-    pointer-events:none; transition:opacity .2s, transform .2s;
-  }
-  .toast.show{ opacity:1; transform:translateX(-50%) translateY(-6px); }
 </style>
 </head>
 <body>
 <div class="app">
 
-  <!-- Top Bar: Brand & Model Status -->
-  <div class="top-bar">
-    <a href="#" class="brand-badge">
-      <img src="icon.png" alt="Dualog" class="brand-logo-img" />
-      <span class="brand-title">Dualog</span>
-    </a>
-    <div class="top-actions">
-      <div class="api-status-pill" id="apiStatusBadge">
-        <span class="api-dot"></span>
-        <span id="apiStatusText">✨ Akıllı Simülasyon (Sonsuz)</span>
-      </div>
-      <button type="button" class="top-btn" id="openSettingsBtn">
-        ⚙️ Model & Ses
-      </button>
-    </div>
-  </div>
-
   <div class="masthead">
     <h1>Dualog</h1>
-    <p>İki yapay zeka sahnede karşı karşıya geliyor. Siz <strong>"Durdur"</strong> diyene kadar kesintisiz tartışırlar, felsefi ve bilimsel tezler üretirler ya da edebi klasikleri canlandırırlar.</p>
+    <p>İki yapay zekayı bir konuda karşı karşıya getirin ya da onlara telif hakkı olmayan bir kitabı okutup tartıştırın — siz durana kadar sahne onların.</p>
   </div>
 
-  <!-- SETUP PANEL -->
+  <div class="card" id="apiCard">
+    <h2>1. Yapay zeka motoru</h2>
+    <p class="sub">Gerçek, konuya özel ve değişken bir sohbet için bir motor ve API anahtarı gerekiyor. Anahtar sadece tarayıcında (localStorage) saklanır, hiçbir yere gönderilmez.</p>
+
+    <div class="field">
+      <label class="field-label" for="providerSelect">Motor</label>
+      <select id="providerSelect">
+        <option value="gemini">Google Gemini — önerilen, ücretsiz kotası var</option>
+        <option value="openai">OpenAI (GPT)</option>
+        <option value="anthropic">Anthropic (Claude)</option>
+      </select>
+      <div class="hint" id="providerHint"></div>
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label class="field-label" for="apiKeyInput">API anahtarı</label>
+        <input type="password" id="apiKeyInput" placeholder="API anahtarını yapıştır" />
+      </div>
+      <div class="field">
+        <label class="field-label" for="modelInput">Model adı</label>
+        <input type="text" id="modelInput" />
+      </div>
+    </div>
+    <div id="apiStatus" class="hint"></div>
+  </div>
+
   <div class="card" id="setupPanel">
     <div class="tabs">
-      <button type="button" class="tab active" data-mode="chat" id="tabChat">💬 Canlı Münazara & Sohbet</button>
-      <button type="button" class="tab" data-mode="book" id="tabBook">📖 Kitap & Radyo Tiyatrosu</button>
+      <button class="tab active" data-mode="chat" id="tabChat">Sohbet</button>
+      <button class="tab" data-mode="book" id="tabBook">Kitap</button>
     </div>
 
     <div class="name-grid">
       <div class="name-slot">
-        <label class="field-label"><span class="dot" style="background:var(--ai1)"></span>Birinci Karakter (Kadın Tonu)</label>
-        <input type="text" id="ai1Name" value="Elena" placeholder="Karakter adı" />
+        <label class="field-label"><span class="dot" style="background:var(--ai1)"></span>Birinci karakter</label>
+        <input type="text" id="ai1Name" value="Ela" />
       </div>
       <div class="name-slot">
-        <label class="field-label"><span class="dot" style="background:var(--ai2)"></span>İkinci Karakter (Erkek Tonu)</label>
-        <input type="text" id="ai2Name" value="Kaan" placeholder="Karakter adı" />
+        <label class="field-label"><span class="dot" style="background:var(--ai2)"></span>İkinci karakter</label>
+        <input type="text" id="ai2Name" value="Kai" />
       </div>
     </div>
+    <div style="height:16px"></div>
 
-    <!-- Chat Mode Fields -->
     <div id="chatFields">
-      <!-- Quick Presets -->
-      <div class="presets-wrapper">
-        <div class="presets-title">⚡ Popüler Münazara Konuları (Tıklayıp Başlatın)</div>
-        <div class="preset-pills">
-          <button type="button" class="preset-pill" onclick="setTopic('Zaman yolculuğu mümkün olsaydı insanlık tarihi nasıl değişirdi?')">⏳ Zaman Yolculuğu</button>
-          <button type="button" class="preset-pill" onclick="setTopic('Mars\'ta koloni kurmak insanlığın kurtuluşu mu, yoksa bir kaynak israfı mı?')">🚀 Mars Kolonisi</button>
-          <button type="button" class="preset-pill" onclick="setTopic('Yapay zeka gerçek bilinç ve duygular kazanabilir mi?')">🤖 Bilinçli Yapay Zeka</button>
-          <button type="button" class="preset-pill" onclick="setTopic('10.000 metrelik bir gökdelen inşa etmek mühendislik ve malzeme bilimi açısından mümkün mü?')">🏗️ 10.000m Gökdelen</button>
-          <button type="button" class="preset-pill" onclick="setTopic('Evrende yalnız mıyız? Fermi Paradoksu ve uzaylı medeniyetler')">🌌 Fermi Paradoksu</button>
-          <button type="button" class="preset-pill" onclick="setTopic('Nükleer füzyon enerjisi dünyadaki tüm güç dengelerini nasıl değiştirecek?')">⚛️ Nükleer Füzyon</button>
-        </div>
-      </div>
-
       <div class="field">
-        <label class="field-label" for="topicInput">Tartışacakları Konu / Mühendislik Problemi</label>
-        <input type="text" id="topicInput" placeholder="ör. Nükleer füzyon enerjisi dünyayı nasıl değiştirecek?" value="Zaman yolculuğu mümkün olsaydı insanlık tarihi nasıl değişirdi?" />
+        <label class="field-label" for="topicInput">Konuşacakları konu</label>
+        <input type="text" id="topicInput" placeholder="ör. Zaman yolculuğu mümkün olsaydı ne değişirdi?" />
       </div>
     </div>
 
-    <!-- Book Mode Fields -->
     <div id="bookFields" style="display:none;">
-      <!-- Quick Classic Book Presets -->
-      <div class="presets-wrapper">
-        <div class="presets-title">📚 Telif Hakkı Olmayan Klasikler (Canlı Tiyatro)</div>
-        <div class="preset-pills">
-          <button type="button" class="preset-pill" onclick="loadBookPreset('kucuk-prens')">🦊 Küçük Prens & Tilki</button>
-          <button type="button" class="preset-pill" onclick="loadBookPreset('frankenstein')">⚡ Frankenstein (Yaratılış)</button>
-          <button type="button" class="preset-pill" onclick="loadBookPreset('sokrates')">🏛️ Sokrates'in Savunması</button>
-          <button type="button" class="preset-pill" onclick="loadBookPreset('sherlock')">🔍 Sherlock Holmes (Kızıl Soruşturma)</button>
-        </div>
-      </div>
-
       <div class="field">
-        <label class="field-label" for="bookText">Kitap Metni (Anlatıcı okuyacak, yorumcu pasaj aralarında ve sonrasında derin felsefi münazara yürütecektir)</label>
-        <textarea id="bookText" placeholder="Metni buraya yapıştırın veya yukarıdaki hazır klasiklerden birini seçin."></textarea>
+        <label class="field-label" for="bookText">Telif hakkı olmayan kitap ya da metin</label>
+        <textarea id="bookText" placeholder="Metni buraya yapıştırın. Anlatıcı bunu okuyacak, diğeri pasaj aralarında yorum yapacak."></textarea>
       </div>
     </div>
 
     <div class="toggle-row">
       <div class="toggle-text">
-        <div class="t1">Gerçekçi İnsan Sesiyle Oku (Doğal Türkçe TTS)</div>
-        <div class="t2">Cümle sonu nefes duraklamaları ve soru vurgularıyla robotikliği giderilmiş sesler</div>
+        <div class="t1">Sesli okusunlar</div>
+        <div class="t2">Aşağıdan ses motorunu seçebilirsin</div>
       </div>
       <label class="switch"><input type="checkbox" id="voiceToggle" checked /><span class="track"></span></label>
     </div>
+    <div class="field" id="voiceEngineField" style="margin-top:14px;">
+      <label class="field-label" for="voiceEngineSelect">Ses motoru</label>
+      <select id="voiceEngineSelect">
+        <option value="browser">Tarayıcı sesi (ücretsiz, sentetik)</option>
+        <option value="elevenlabs">ElevenLabs (gerçekçi insan sesi, API anahtarı gerekir)</option>
+      </select>
+    </div>
+    <div id="elevenFields" style="display:none;">
+      <div class="field">
+        <label class="field-label" for="elKeyInput">ElevenLabs API anahtarı</label>
+        <input type="password" id="elKeyInput" placeholder="ElevenLabs anahtarını yapıştır" />
+        <div class="hint">Ücretsiz deneme kotası var. <a href="https://elevenlabs.io" target="_blank" rel="noopener">elevenlabs.io</a>'dan alabilirsin.</div>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label class="field-label" for="elVoice1Input">Birinci karakterin ses ID'si</label>
+          <input type="text" id="elVoice1Input" placeholder="ör. 21m00Tcm4TlvDq8ikWAM" />
+        </div>
+        <div class="field">
+          <label class="field-label" for="elVoice2Input">İkinci karakterin ses ID'si</label>
+          <input type="text" id="elVoice2Input" placeholder="ör. pNInz6obpgDQGcFmaJgB" />
+        </div>
+      </div>
+      <div class="hint">Ses ID'lerini ElevenLabs hesabındaki "Voices" kısmından kopyalayabilirsin; boş bırakırsan öntanımlı iki ses kullanılır.</div>
+    </div>
+
     <div class="toggle-row">
       <div class="toggle-text">
         <div class="t1">"Dur" dediğinizde mikrofonla durdursun</div>
-        <div class="t2">Mikrofon izni gerektirir; "dur" kelimesini duyduğunda sahneyi hemen duraklatır</div>
+        <div class="t2">Mikrofon izni gerekir; sesli okuma açıkken güvenilirliği düşebilir</div>
       </div>
       <label class="switch"><input type="checkbox" id="micToggle" /><span class="track"></span></label>
     </div>
 
-    <button type="button" class="primary-btn" id="startBtn">
-      <span>▶ Sahneyi Başlat (Sonsuz Sohbet)</span>
-    </button>
-    <div class="hint" id="setupHint">Sohbet siz "Durdur" düğmesine basana ya da mikrofondan "Dur" diyene kadar kesintisiz devam eder.</div>
+    <button class="primary-btn" id="startBtn">Sahneyi başlat</button>
+    <div class="hint" id="setupHint" style="text-align:center; margin-top:10px;">Konuşma, siz "Durdur" düğmesine basana ya da (açıksa) "dur" diyene kadar sürer.</div>
   </div>
 
-  <!-- STAGE PANEL (CANLI SAHNE) -->
   <div class="card" id="stagePanel">
-    <div class="stage-topic">
-      <span id="stageTopic">Konu</span>
-      <span class="turn-counter" id="turnCounter">Tur: 1</span>
-    </div>
-
+    <div class="stage-topic" id="stageTopic"></div>
     <div class="panels">
-      <!-- Speaker 1 Panel -->
       <div class="speaker-panel p1" id="speakerPanel1">
-        <div class="speaker-head">
-          <span class="dot" style="background:var(--ai1)"></span>
-          <span id="badge1">Elena</span>
-          <span class="live-tag">
-            <span class="wave-bars">
-              <span class="wave-bar"></span><span class="wave-bar"></span><span class="wave-bar"></span>
-            </span>
-            konuşuyor…
-          </span>
-        </div>
+        <div class="speaker-head"><span class="dot" style="background:var(--ai1)"></span><span id="badge1">Ela</span><span class="live-tag">konuşuyor…</span></div>
         <div class="speaker-body" id="body1"><p class="placeholder">Henüz konuşmadı.</p></div>
       </div>
-
-      <!-- Speaker 2 Panel -->
       <div class="speaker-panel p2" id="speakerPanel2">
-        <div class="speaker-head">
-          <span class="dot" style="background:var(--ai2)"></span>
-          <span id="badge2">Kaan</span>
-          <span class="live-tag">
-            <span class="wave-bars">
-              <span class="wave-bar"></span><span class="wave-bar"></span><span class="wave-bar"></span>
-            </span>
-            konuşuyor…
-          </span>
-        </div>
+        <div class="speaker-head"><span class="dot" style="background:var(--ai2)"></span><span id="badge2">Kai</span><span class="live-tag">konuşuyor…</span></div>
         <div class="speaker-body" id="body2"><p class="placeholder">Henüz konuşmadı.</p></div>
       </div>
     </div>
-
-    <!-- Live Moderator Interjection Bar -->
-    <div class="moderator-bar">
-      <input type="text" id="moderatorInput" placeholder="🎤 Tartışmaya soru veya yeni yönlendirme ekleyin..." />
-      <button type="button" id="moderatorBtn">Araya Gir</button>
-    </div>
-
-    <div class="status-line" id="statusLine">
-      <span class="status-dot"></span>
-      <span id="statusText">Sahne hazırlanıyor…</span>
-    </div>
-
+    <div class="status-line" id="statusLine"><span class="status-dot"></span><span id="statusText">Hazırlanıyor…</span></div>
     <div class="stage-controls">
-      <button type="button" class="stop-btn" id="stopBtn">⏹ Durdur</button>
-      <button type="button" class="ghost-btn" id="restartBtn">↺ Baştan Başla</button>
-      <button type="button" class="ghost-btn" id="exportBtn" title="Konuşma metnini indir">💾 İndir (.txt)</button>
-      <label class="mini-toggle"><input type="checkbox" id="voiceToggleLive" /> 🔊 Sesli</label>
+      <button class="stop-btn" id="stopBtn">Durdur</button>
+      <button class="ghost-btn" id="restartBtn">Baştan başla</button>
+      <label class="mini-toggle"><input type="checkbox" id="voiceToggleLive" /> sesli</label>
     </div>
     <div class="note" id="stageNote"></div>
   </div>
 
 </div>
 
-<!-- SETTINGS MODAL -->
-<div class="modal-overlay" id="settingsModal">
-  <div class="modal-box">
-    <div class="modal-header">
-      <h3>⚙️ Dualog Model & Ses Ayarları</h3>
-      <button type="button" class="modal-close" id="closeSettingsBtn">&times;</button>
-    </div>
-
-    <div class="modal-field">
-      <label for="providerSelect">Yapay Zeka Zeka Motoru</label>
-      <select id="providerSelect">
-        <option value="demo">✨ Akıllı Simülasyon (Sonsuz Sohbet / Ücretsiz & Anahtarsız)</option>
-        <option value="claude">Anthropic Claude (Sonnet 3.5)</option>
-        <option value="gemini">Google Gemini (Gemini 1.5/2.0 Flash)</option>
-        <option value="openrouter">OpenRouter (Llama 3.3 70B / Mistral)</option>
-        <option value="openai">OpenAI (GPT-4o / GPT-4o-mini)</option>
-      </select>
-    </div>
-
-    <div class="modal-field" id="apiKeyField" style="display:none;">
-      <label for="apiKeyInput">Yapay Zeka API Anahtarı (API Key)</label>
-      <input type="password" id="apiKeyInput" placeholder="sk-ant-... veya AIzaSy..." autocomplete="off" />
-      <div style="font-size:11.5px; color:var(--text-faint); margin-top:5px;">
-        Anahtarınız sadece tarayıcınızın yerel hafızasında (localStorage) saklanır, hiçbir harici sunucuya iletilmez.
-      </div>
-    </div>
-
-    <div class="modal-field">
-      <label for="ttsEngineSelect">Ses Sentezi Kalitesi & Motoru</label>
-      <select id="ttsEngineSelect">
-        <option value="natural">🌟 Doğal Türkçe Nöral Sesler (Google / Apple Enhanced + Doğal Kadans)</option>
-        <option value="elevenlabs">💎 ElevenLabs TTS (Stüdyo Kalitesi İnsan Sesi)</option>
-      </select>
-    </div>
-
-    <!-- Voice Picker Fine-Tuning for Web Speech -->
-    <div class="modal-field" id="localVoicePickerField">
-      <label>Cihazınızdaki Ses Seçimi & Test</label>
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-        <div>
-          <span style="font-size:11px; color:var(--text-faint); display:block; margin-bottom:4px;">1. Karakter (Kadın)</span>
-          <select id="voiceSelect1" style="font-size:12.5px; padding:8px;"></select>
-          <div class="voice-test-row">
-            <button type="button" class="voice-test-btn" id="testVoiceBtn1">▶ Sesi Test Et</button>
-          </div>
-        </div>
-        <div>
-          <span style="font-size:11px; color:var(--text-faint); display:block; margin-bottom:4px;">2. Karakter (Erkek)</span>
-          <select id="voiceSelect2" style="font-size:12.5px; padding:8px;"></select>
-          <div class="voice-test-row">
-            <button type="button" class="voice-test-btn" id="testVoiceBtn2">▶ Sesi Test Et</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="modal-field" id="elevenLabsField" style="display:none;">
-      <label for="elevenLabsKey">ElevenLabs API Key</label>
-      <input type="password" id="elevenLabsKey" placeholder="xi-api-key..." autocomplete="off" />
-      <div style="font-size:11.5px; color:var(--text-faint); margin-top:5px;">
-        ElevenLabs anahtarı ile stüdyo kalitesinde gerçek insan sesiyle seslendirme yapılır.
-      </div>
-    </div>
-
-    <div class="modal-actions">
-      <button type="button" class="ghost-btn" id="cancelSettingsBtn">Vazgeç</button>
-      <button type="button" class="modal-save-btn" id="saveSettingsBtn">Kaydet & Uygula</button>
-    </div>
-  </div>
-</div>
-
-<!-- Toast -->
-<div class="toast" id="toast"></div>
-
 <script>
 (function(){
   const $ = (id) => document.getElementById(id);
+  const LS = {
+    get(k, d){ try{ const v = localStorage.getItem(k); return v === null ? d : v; }catch(e){ return d; } },
+    set(k, v){ try{ localStorage.setItem(k, v); }catch(e){} }
+  };
+
+  const PROVIDER_DEFAULTS = {
+    gemini:   { model: 'gemini-2.0-flash', hint: 'Ücretsiz anahtar: <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a>. Tarayıcıdan doğrudan çağrıya en uygun motor budur.' },
+    openai:   { model: 'gpt-4o-mini', hint: 'platform.openai.com üzerinden anahtar alınır. Bazı hesap/ağ yapılandırmalarında tarayıcıdan doğrudan istek CORS hatası verebilir.' },
+    anthropic:{ model: 'claude-3-5-sonnet-latest', hint: 'console.anthropic.com üzerinden anahtar alınır. Bazı ağlarda tarayıcıdan doğrudan istek CORS hatası verebilir.' }
+  };
+
+  const providerSelect = $('providerSelect'), apiKeyInput = $('apiKeyInput'), modelInput = $('modelInput');
+  const providerHint = $('providerHint'), apiStatus = $('apiStatus');
+
+  function refreshProviderUI(){
+    const p = providerSelect.value;
+    providerHint.innerHTML = PROVIDER_DEFAULTS[p].hint;
+    if (!modelInput.value || Object.values(PROVIDER_DEFAULTS).some(d => d.model === modelInput.value)){
+      modelInput.value = PROVIDER_DEFAULTS[p].model;
+    }
+    LS.set('dualog_provider', p);
+    updateApiStatus();
+  }
+  function updateApiStatus(){
+    apiStatus.innerHTML = apiKeyInput.value.trim()
+      ? '<span class="ok-badge"><span class="dot"></span>Anahtar girildi, gerçek yanıtlar kullanılacak.</span>'
+      : 'Anahtar girmeden başlatırsan sahne açılmaz.';
+  }
+  providerSelect.value = LS.get('dualog_provider', 'gemini');
+  apiKeyInput.value = LS.get('dualog_apikey', '');
+  modelInput.value = LS.get('dualog_model', '') || PROVIDER_DEFAULTS[providerSelect.value].model;
+  refreshProviderUI();
+  providerSelect.addEventListener('change', refreshProviderUI);
+  apiKeyInput.addEventListener('input', () => { LS.set('dualog_apikey', apiKeyInput.value); updateApiStatus(); });
+  modelInput.addEventListener('input', () => LS.set('dualog_model', modelInput.value));
 
   const tabChat = $('tabChat'), tabBook = $('tabBook');
   const chatFields = $('chatFields'), bookFields = $('bookFields');
   const topicInput = $('topicInput'), bookText = $('bookText');
   const ai1NameInput = $('ai1Name'), ai2NameInput = $('ai2Name');
   const voiceToggle = $('voiceToggle'), micToggle = $('micToggle');
+  const voiceEngineSelect = $('voiceEngineSelect'), elevenFields = $('elevenFields');
+  const elKeyInput = $('elKeyInput'), elVoice1Input = $('elVoice1Input'), elVoice2Input = $('elVoice2Input');
   const startBtn = $('startBtn');
-  const setupPanel = $('setupPanel'), stagePanel = $('stagePanel');
+  const apiCard = $('apiCard'), setupPanel = $('setupPanel'), stagePanel = $('stagePanel');
   const badge1 = $('badge1'), badge2 = $('badge2'), stageTopic = $('stageTopic');
-  const turnCounter = $('turnCounter');
   const body1 = $('body1'), body2 = $('body2');
   const panel1El = $('speakerPanel1'), panel2El = $('speakerPanel2');
   const statusLine = $('statusLine'), statusText = $('statusText');
-  const stopBtn = $('stopBtn'), restartBtn = $('restartBtn'), exportBtn = $('exportBtn');
+  const stopBtn = $('stopBtn'), restartBtn = $('restartBtn');
   const voiceToggleLive = $('voiceToggleLive');
   const stageNote = $('stageNote');
-  const moderatorInput = $('moderatorInput'), moderatorBtn = $('moderatorBtn');
-  const settingsModal = $('settingsModal'), openSettingsBtn = $('openSettingsBtn');
-  const closeSettingsBtn = $('closeSettingsBtn'), cancelSettingsBtn = $('cancelSettingsBtn');
-  const saveSettingsBtn = $('saveSettingsBtn'), providerSelect = $('providerSelect');
-  const apiKeyField = $('apiKeyField'), apiKeyInput = $('apiKeyInput');
-  const ttsEngineSelect = $('ttsEngineSelect'), elevenLabsField = $('elevenLabsField'), elevenLabsKey = $('elevenLabsKey');
-  const voiceSelect1 = $('voiceSelect1'), voiceSelect2 = $('voiceSelect2');
-  const testVoiceBtn1 = $('testVoiceBtn1'), testVoiceBtn2 = $('testVoiceBtn2');
-  const apiStatusBadge = $('apiStatusBadge'), apiStatusText = $('apiStatusText');
-  const toast = $('toast');
 
-  function showToast(msg) {
-    if (!toast) return;
-    toast.textContent = msg;
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 3200);
+  voiceEngineSelect.value = LS.get('dualog_voice_engine', 'browser');
+  elKeyInput.value = LS.get('dualog_el_key', '');
+  elVoice1Input.value = LS.get('dualog_el_voice1', '');
+  elVoice2Input.value = LS.get('dualog_el_voice2', '');
+  function refreshVoiceEngineUI(){
+    elevenFields.style.display = voiceEngineSelect.value === 'elevenlabs' ? '' : 'none';
+  }
+  refreshVoiceEngineUI();
+  voiceEngineSelect.addEventListener('change', () => { LS.set('dualog_voice_engine', voiceEngineSelect.value); refreshVoiceEngineUI(); });
+  elKeyInput.addEventListener('input', () => LS.set('dualog_el_key', elKeyInput.value));
+  elVoice1Input.addEventListener('input', () => LS.set('dualog_el_voice1', elVoice1Input.value));
+  elVoice2Input.addEventListener('input', () => LS.set('dualog_el_voice2', elVoice2Input.value));
+
+  let mode = 'chat';
+  tabChat.addEventListener('click', () => setMode('chat'));
+  tabBook.addEventListener('click', () => setMode('book'));
+  function setMode(m){
+    mode = m;
+    tabChat.classList.toggle('active', m === 'chat');
+    tabBook.classList.toggle('active', m === 'book');
+    chatFields.style.display = m === 'chat' ? '' : 'none';
+    bookFields.style.display = m === 'book' ? '' : 'none';
   }
 
-  // Preset Handlers
-  window.setTopic = function(topic) {
-    topicInput.value = topic;
-    showToast("🎯 Konu seçildi: " + topic);
-  };
-
-  const BOOK_PRESETS = {
-    'kucuk-prens': `— Merhaba, dedi tilki.
-— Merhaba, dedi Küçük Prens kibarca, ama dönüp baktığında kimseyi göremedi.
-— Buradayım, dedi ses, elma ağacının altında.
-— Kimsin sen? dedi Küçük Prens. Çok güzelsin...
-— Ben bir tilkiyim, dedi tilki.
-— Gel benimle oyna, diye önerdi Küçük Prens. Öyle mutsuzum ki...
-— Seninle oynayamam, dedi tilki. Evcil değilim ben.
-— Ah! Özür dilerim, dedi Küçük Prens. Ama biraz düşündükten sonra ekledi:
-— "Evcilleştirmek" ne demek?
-— Çoktan unutulmuş bir şey, dedi tilki. "Bağlar kurmak" anlamına gelir.
-— Bağlar kurmak mı?
-— Elbette, dedi tilki. Benim için sen, şimdilik yüz binlerce çocuktan birisin sadece. Sana ihtiyacım yok benim. Senin de bana ihtiyacın yok. Ben de senin için yüz binlerce tilkiden biriyim. Ama beni evcilleştirirsen, birbirimize ihtiyacımız olacak. Sen benim için dünyada tek olacaksın. Ben de senin için dünyada tek olacağım...`,
-    'frankenstein': `Kasım ayının kasvetli bir gecesiydi. Uğraşlarımın sonucunu nihayet görecektim. Çevremdeki aletleri, cansız varlığa hayat kıvılcımını aktaracak şekilde hazırladım. Saat sabahın biriydi; yağmur kasvetle pencerelere vuruyordu ve mumum neredeyse tükenmişti. 
-Tükenen ışığın loş aydınlığında, yaratığın donuk sarı gözünün açıldığını gördüm. Ağır ağır nefes aldı ve bacakları sarsıcı bir hareketle kımıldadı.
-Bu felaketi nasıl anlatmalı? Büyük bir özenle şekillendirmeye çalıştığım bu ucube varlığı nasıl tarif etmeli? Uzuvları orantılıydı ve güzel hatlar seçmiştim. Güzel Tanrım! Sarı derisi altındaki kasları ve damarları güçlükle örtüyordu; saçları parlak siyah ve gürdü, dişleri inci gibi beyazdı; ama bu lüks, sulu gözleriyle ve buruşuk teniyle korkunç bir tezat oluşturuyordu.`,
-    'sokrates': `Atinalılar! Beni suçlayanların üzerinizde nasıl bir etki bıraktığını bilemem; ama doğrusunu isterseniz, neredeyse beni bile kendilerine inandıracaklardı, öyle kandırıcı konuştular. Oysa söylediklerinin içinde doğru olan tek bir söz bile yoktu.
-Benim hitabet gücümden korkulması gerektiğini söylemelerine ise özellikle hayret ettim. Çünkü ben yalancı bir hatip değilim; doğruyu söyleyen biriyim.
-Benden süslü püslü, özenle dizilmiş nutuklar beklemeyin. Ben çarşıda, pazarda, sarrafların tezgâhları başında nasıl konuştuysam, aklıma gelen ilk kelimelerle, dolaysızca konuşacağım. Çünkü ben yetmiş yaşını aşmış bir adamım ve mahkeme huzuruna ilk defa çıkıyorum. Bilgeliğim varsa, tek bilgeliğim hiçbir şey bilmediğimi bilmemden ibarettir.`,
-    'sherlock': `Baker Sokağı 221B'deki odamızda şöminenin karşısında oturuyorduk. Holmes piposundan mavi duman halkaları üflerken önündeki küçük sarı telgrafı inceliyordu.
-— Watson, dedi ansızın gözlerini bana çevirerek, insan beyni başlangıçta küçük, boş bir tavan arası gibidir. Oraya hangi mobilyayı koyacağınıza siz karar verirsiniz. Bir aptal, yoluna çıkan her türlü çerçöpü oraya doldurur ve sonra işine yarayacak bilgiyi bulamaz.
-— Peki ya bu cinayet meselesi? diye sordum merakla. Scotland Yard yine tıkandı mı?
-— Ah, Lestrade yine duvara tosladı dostum, dedi Holmes hafifçe gülümseyerek. Olay mahallinde hiç kan yokmuş ama duvara kanla "RACHE" yazılmış. Almanların intikam kelimesi olduğunu düşünmüşler. Oysa katil sadece Rachel adını yazmaya fırsat bulamadı. Hazırlan Watson, av başladı!`
-  };
-
-  window.loadBookPreset = function(key) {
-    if (BOOK_PRESETS[key]) {
-      bookText.value = BOOK_PRESETS[key];
-      showToast("📖 Kitap pasajı yüklendi!");
-    }
-  };
-
-  // State Variables
-  let mode = 'chat';
   let running = false;
   let messages = [];
   let ai1 = {}, ai2 = {};
@@ -635,89 +333,21 @@ Benden süslü püslü, özenle dizilmiş nutuklar beklemeyin. Ben çarşıda, p
   let currentAbort = null;
   let recognition = null;
   let voicesList = [];
-  let userInterjection = null;
-  let currentTurn = 0;
 
-  // HIGH-QUALITY NATURAL SPEECH SYNTHESIS ENGINE
-  function loadVoices(){
-    if (!('speechSynthesis' in window)) return;
-    voicesList = speechSynthesis.getVoices();
-    populateVoiceSelects();
-  }
+  function loadVoices(){ voicesList = speechSynthesis.getVoices(); }
   loadVoices();
   if (typeof speechSynthesis !== 'undefined'){ speechSynthesis.onvoiceschanged = loadVoices; }
-
-  function populateVoiceSelects() {
-    if (!voiceSelect1 || !voiceSelect2 || !voicesList.length) return;
-    const current1 = localStorage.getItem('dualog_voice_1') || '';
-    const current2 = localStorage.getItem('dualog_voice_2') || '';
-
-    voiceSelect1.innerHTML = '<option value="">(Otomatik Doğal Kadın Sesi)</option>';
-    voiceSelect2.innerHTML = '<option value="">(Otomatik Doğal Erkek Sesi)</option>';
-
-    voicesList.forEach((v, idx) => {
-      const isTr = v.lang && v.lang.toLowerCase().startsWith('tr');
-      const optLabel = `${v.name} (${v.lang})${isTr ? ' 🇹🇷' : ''}`;
-      
-      const opt1 = document.createElement('option');
-      opt1.value = v.name;
-      opt1.textContent = optLabel;
-      if (v.name === current1) opt1.selected = true;
-      voiceSelect1.appendChild(opt1);
-
-      const opt2 = document.createElement('option');
-      opt2.value = v.name;
-      opt2.textContent = optLabel;
-      if (v.name === current2) opt2.selected = true;
-      voiceSelect2.appendChild(opt2);
-    });
+  function voiceQuality(v){
+    const n = (v.name || '').toLowerCase();
+    if (n.includes('natural') || n.includes('neural') || n.includes('online') || n.includes('premium')) return 3;
+    if (n.includes('google')) return 2;
+    return 0;
   }
-
-  // Smart Voice Picker: Prioritizes Neural / Enhanced / Google / Natural Turkish Voices
-  function pickNaturalVoice(genderPrefer){
-    const savedName = localStorage.getItem(genderPrefer === 'female' ? 'dualog_voice_1' : 'dualog_voice_2');
-    if (savedName && voicesList.length) {
-      const found = voicesList.find(v => v.name === savedName);
-      if (found) return found;
-    }
-
+  function pickBrowserVoice(preferIndex){
     if (!voicesList.length) return null;
-    const trVoices = voicesList.filter(v => v.lang && v.lang.toLowerCase().startsWith('tr'));
-
-    if (trVoices.length) {
-      if (genderPrefer === 'female') {
-        const female = trVoices.find(v => /yelda|filiz|emel|damla|female|kadın|siri/i.test(v.name));
-        if (female) return female;
-        return trVoices[0];
-      } else {
-        const male = trVoices.find(v => /cem|cemal|ahmet|male|erkek|google/i.test(v.name));
-        if (male) return male;
-        return trVoices[Math.min(1, trVoices.length - 1)];
-      }
-    }
-
-    // Fallback: system natural voice
-    const naturalEn = voicesList.find(v => /natural|enhanced|google|samantha/i.test(v.name));
-    return naturalEn || voicesList[0];
-  }
-
-  // Voice Test Handlers
-  testVoiceBtn1.addEventListener('click', () => {
-    testSingleVoice('female', 1.06, "Merhaba, ben Elena. Dualog üzerinde canlı felsefi tartışmalara hazırım.");
-  });
-  testVoiceBtn2.addEventListener('click', () => {
-    testSingleVoice('male', 0.88, "Selam, ben Kaan. Olaylara analitik ve mantıksal bir pencereden bakacağız.");
-  });
-
-  function testSingleVoice(gender, pitch, sampleText) {
-    if (!('speechSynthesis' in window)) return;
-    speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(sampleText);
-    const v = pickNaturalVoice(gender);
-    if (v) u.voice = v;
-    u.pitch = pitch;
-    u.rate = 1.0;
-    speechSynthesis.speak(u);
+    const tr = voicesList.filter(v => v.lang && v.lang.toLowerCase().startsWith('tr'));
+    const pool = (tr.length ? tr : voicesList).slice().sort((a, b) => voiceQuality(b) - voiceQuality(a));
+    return pool[preferIndex % pool.length] || pool[0];
   }
 
   function setActivePanel(speaker){
@@ -729,241 +359,146 @@ Benden süslü püslü, özenle dizilmiş nutuklar beklemeyin. Ben çarşıda, p
     panel2El.classList.remove('active');
   }
 
-  // ElevenLabs Direct Neural TTS Streamer
-  async function speakElevenLabs(text, voiceId, apiKey) {
+  function speakBrowser(text, el, voiceSlot, pitch){
+    return new Promise((resolve) => {
+      if (!('speechSynthesis' in window) || !text){ el.textContent = text; resolve(); return; }
+      el.textContent = '';
+      let watchdog = null;
+      let settled = false;
+      let hardTimeout = null;
+      function finish(){
+        if (settled) return;
+        settled = true;
+        if (watchdog) clearInterval(watchdog);
+        if (hardTimeout) clearTimeout(hardTimeout);
+        el.textContent = text;
+        resolve();
+      }
+      try {
+        const u = new SpeechSynthesisUtterance(text);
+        const v = pickBrowserVoice(voiceSlot);
+        if (v) u.voice = v;
+        u.lang = (v && v.lang) || 'tr-TR';
+        u.pitch = pitch;
+        u.rate = 0.97;
+        let revealed = 0;
+        u.onboundary = (e) => {
+          let end;
+          if (typeof e.charLength === 'number' && e.charLength > 0){ end = e.charIndex + e.charLength; }
+          else { const nextSpace = text.indexOf(' ', e.charIndex + 1); end = nextSpace === -1 ? text.length : nextSpace; }
+          if (end > revealed){ revealed = end; el.textContent = text.slice(0, revealed); }
+        };
+        u.onend = finish;
+        u.onerror = finish;
+        // Chrome bug: the speech engine silently stalls on longer utterances and
+        // never fires onend. Periodically nudging pause/resume keeps it alive.
+        watchdog = setInterval(() => {
+          if (speechSynthesis.speaking && !speechSynthesis.paused){
+            speechSynthesis.pause();
+            speechSynthesis.resume();
+          }
+        }, 4000);
+        // Absolute safety net so the conversation can never freeze forever even
+        // if the engine truly dies: move on after a generous ceiling.
+        hardTimeout = setTimeout(finish, Math.max(8000, text.length * 160));
+        speechSynthesis.speak(u);
+      } catch(e){ finish(); }
+    });
+  }
+
+  async function speakElevenLabs(text, el, voiceId){
+    el.textContent = text;
+    const key = elKeyInput.value.trim();
+    if (!key || !voiceId) return;
     try {
-      const resp = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
+      const resp = await fetch('https://api.elevenlabs.io/v1/text-to-speech/' + voiceId, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'xi-api-key': apiKey
-        },
-        body: JSON.stringify({
-          text,
-          model_id: 'eleven_multilingual_v2',
-          voice_settings: { stability: 0.52, similarity_boost: 0.78 }
-        })
+        headers: { 'Content-Type': 'application/json', 'xi-api-key': key },
+        body: JSON.stringify({ text: text, model_id: 'eleven_multilingual_v2' })
       });
-      if (!resp.ok) throw new Error('ElevenLabs TTS error ' + resp.status);
+      if (!resp.ok) throw new Error('ElevenLabs hata: ' + resp.status);
       const blob = await resp.blob();
-      const audioUrl = URL.createObjectURL(blob);
-      const audio = new Audio(audioUrl);
-      return new Promise((res) => {
-        audio.onended = res;
-        audio.onerror = res;
-        audio.play().catch(res);
-      });
-    } catch(e) {
-      console.warn('ElevenLabs fallback to Web Speech:', e);
-      return null;
-    }
-  }
-
-  // Natural Human Speech Engine with Respiratory Cadence & Word Boundary Highlight
-  // Splits text into natural sentence clauses and pauses between sentences (mimicking human breathing)
-  async function speakNaturalSynced(text, el, gender, basePitch){
-    if (!voiceOn || !('speechSynthesis' in window) || !text){
-      el.textContent = text;
-      return;
-    }
-
-    const ttsMode = localStorage.getItem('dualog_tts') || 'natural';
-    const elKey = localStorage.getItem('dualog_el_key') || '';
-
-    // Check ElevenLabs
-    if (ttsMode === 'elevenlabs' && elKey) {
-      el.textContent = text;
-      // Predefined IDs: 21m00Tcm4TlvDq8ikWAM (Rachel/Female), ErXwobaYiN019PkySvjV (Antoni/Male)
-      const voiceId = gender === 'female' ? '21m00Tcm4TlvDq8ikWAM' : 'ErXwobaYiN019PkySvjV';
-      const played = await speakElevenLabs(text, voiceId, elKey);
-      if (played !== null) return;
-    }
-
-    // Split text into natural breath units (sentences / major clauses)
-    const sentences = text.match(/[^.!?…]+[.!?…]+["'’”]?|\S+$/g) || [text];
-    el.textContent = '';
-
-    for (let i = 0; i < sentences.length; i++) {
-      if (!running) break;
-      const part = sentences[i].trim();
-      if (!part) continue;
-
+      const url = URL.createObjectURL(blob);
+      const audio = new Audio(url);
       await new Promise((resolve) => {
-        try {
-          const u = new SpeechSynthesisUtterance(part);
-          const v = pickNaturalVoice(gender);
-          if (v) u.voice = v;
-          u.lang = (v && v.lang) || 'tr-TR';
-
-          // Human-like intonation: Questions have a slight upward pitch inflection
-          const isQuestion = /[?]$/.test(part);
-          u.pitch = isQuestion ? basePitch + 0.08 : basePitch;
-          u.rate = 1.0;
-
-          let partRevealed = 0;
-          const initialPrefix = el.textContent ? el.textContent + ' ' : '';
-
-          u.onboundary = (e) => {
-            let end;
-            if (typeof e.charLength === 'number' && e.charLength > 0){
-              end = e.charIndex + e.charLength;
-            } else {
-              const nextSpace = part.indexOf(' ', e.charIndex + 1);
-              end = nextSpace === -1 ? part.length : nextSpace;
-            }
-            if (end > partRevealed){
-              partRevealed = end;
-              el.textContent = initialPrefix + part.slice(0, partRevealed);
-            }
-          };
-
-          u.onend = () => {
-            el.textContent = initialPrefix + part;
-            resolve();
-          };
-          u.onerror = () => {
-            el.textContent = initialPrefix + part;
-            resolve();
-          };
-
-          speechSynthesis.speak(u);
-        } catch(e) {
-          el.textContent += (el.textContent ? ' ' : '') + part;
-          resolve();
-        }
+        audio.onended = resolve;
+        audio.onerror = resolve;
+        audio.play().catch(resolve);
       });
-
-      // Human-like micro-pause between sentences (cadence & breath)
-      if (i < sentences.length - 1 && running) {
-        await sleep(220);
-      }
+      URL.revokeObjectURL(url);
+    } catch(e){
+      setStatus('ElevenLabs seslendirme başarısız oldu: ' + e.message, true);
     }
   }
 
-  // INFINITE AUTONOMOUS DIALOGUE ENGINE (Sonsuz Münazara Motoru)
-  // Procedurally generates boundless intellectual turns so the debate NEVER ends until the user stops it.
-  function generateInfiniteTurn(speakerName, otherName, topic, turn, history, interjection) {
-    if (interjection) {
-      return `${otherName}, dinleyicimiz tartışmamıza çok can alıcı bir soruyla müdahale etti: "${interjection}". Bence bu nokta teorimizin tam kalbine dokunuyor; çünkü bütün varsayımlarımızı yeniden sınamak zorundayız!`;
-    }
-
-    // Vast Bank of Dialectic Phases: Epistemology, Thermodynamics, Paradoxes, Ethics, Socratic Questioning
-    const debatePhases = [
-      (s, o, t) => `Bence "${t}" meselesine bakarken çoğu insanın gözden kaçırdığı en temel şey, insan algısının sınırları. ${o}, sence de bu konuyu sadece pratik sonuçlarıyla değil, varoluşsal boyutlarıyla ele almamız gerekmez mi?`,
-      (s, o, t) => `Söylediğin kulağa şiirsel geliyor ${o}, ama pratik gerçekliği ıskalıyorsun. Teori masada kusursuz durabilir, fakat somut evrende kurallar duygularla değil, fizik ve mantık yasalarıyla işler.`,
-      (s, o, t) => `Tarih boyunca ne zaman böyle bir kırılma noktasına gelsek aynı dirençle karşılaştık ${o}. Matbaanın icadında da, elektriğin keşfinde de şüpheciler vardı. Bugün tartıştığımız bu konu da tam olarak o eşikte duruyor.`,
-      (s, o, t) => `İyi de ${o}, burada çözümsüz bir paradoks doğuyor! Eğer senin varsayımını kabul edersek, nedensellik ilkesi çöker. Bir sonucun kendi sebebini yok etmesine hangi denklem izin verebilir?`,
-      (s, o, t) => `Belki de asıl korkumuz bilinmeyenin kendisi ${o}. İnsan zihni belirsizlikten nefret ettiği için bu konuyu ya bir kurtuluş mucizesi ya da kıyamet senaryosu olarak yaftalıyor. Ortası yok mu sence?`,
-      (s, o, t) => `Diyelim ki bunu başardık ${o}. Peki kontrol mekanizması kimin elinde olacak? Kaynakların ve gücün adil dağıtılamadığı bir dünyada, bu teknolojinin elit bir azınlığın tekeline girmesini nasıl engelleyeceksin?`,
-      (s, o, t) => `Çok çarpıcı bir noktaya geldik ${o}. Farkında mısın, tartışmanın başından beri aslında bir teknolojiyi değil, insanın kendi sınırlarını aşma arzusunu ve kibrini tartışıyoruz.`,
-      (s, o, t) => `Sana açık bir soru sorayım ${o}: Eğer yarın bu tez gerçek olsa, ilk yirmi dört saat içinde insanlığın yapacağı en büyük hata ne olurdu? Cesurca cevap ver.`,
-      (s, o, t) => `Cevabındaki samimiyeti takdir ediyorum ama bir noktayı atlıyorsun ${o}. İnsanlık her büyük krizde kendini adapte etmeyi başardı. Yıkım dediğin şey bazen sadece yeni bir doğumun sancısıdır.`,
-      (s, o, t) => `Termodinamik ve entropi bize hiçbir şeyin karşılıksız kazanılamayacağını söylüyor ${o}. Eğer bu sistemde bir düzen yaratacaksak, evrenin başka bir köşesinde ne kadar kaos yaratacağımızı hesapladın mı?`,
-      (s, o, t) => `İşte tam bu noktada mühendislik ile felsefe birbirine sarılıyor ${o}. Sen hesaplanabilir risklerden bahsediyorsun, bense öngörülemeyen insan faktöründen. Tarih kitapları en iyi planlanmış hatalarla dolu!`,
-      (s, o, t) => `Kabul etmeliyim ki ${o}, beni köşeye sıkıştırdın. Fakat sorunu tersten okuyalım: Eğer bu adımı atmaz ve statükoyu korursak, yerimizde saymanın getireceği çürüme daha büyük bir felaket değil mi?`,
-      (s, o, t) => `Buna katılmıyorum ${o}. Bilinmeyene doğru şuursuzca koşmaktansa, temelleri sağlamlaştırarak ilerlemek bir korkaklık değil, entelektüel bir sorumluluktur.`,
-      (s, o, t) => `Fakat ${o}, tarihteki hiçbir büyük sıçrama ihtiyatla yapılmadı! Ateşi ilk yakan insan da elini yakma ihtimalini biliyordu ama karanlığı aydınlatmayı seçti.`,
-      (s, o, t) => `Evrenin milyarlarca yıllık ölçeğinde bizim bu küçük dünyada dert ettiğimiz şeyler bir kum tanesi kadar küçük ${o}. Ama o kum tanesinin içinde anlam yaratabilmek, işte asıl mucize bu!`,
-      (s, o, t) => `Sohbetin başından beri savunduğun argümanlar çok derinleşti ${o}. Ancak şu soruyu cevapsız bırakamayız: Gelecek nesiller bugünkü tartışmamıza baktığında bizi cesur kaşifler olarak mı, yoksa felaketi çağıran hayalperestler olarak mı anacak?`
-    ];
-
-    const phaseIndex = (turn - 1) % debatePhases.length;
-    return debatePhases[phaseIndex](speakerName, otherName, topic);
+  function speak(text, el, voiceSlot, pitch, elevenVoiceId){
+    if (!voiceOn) { el.textContent = text; return Promise.resolve(); }
+    if (voiceEngineSelect.value === 'elevenlabs') return speakElevenLabs(text, el, elevenVoiceId);
+    return speakBrowser(text, el, voiceSlot, pitch);
   }
 
-  // Universal Multi-Provider AI Caller with Autonomous Fallback
-  async function callAI(systemPrompt, userPrompt, signal, speakerName, otherName, topic, turn, interjection){
-    const provider = localStorage.getItem('dualog_provider') || 'demo';
-    const apiKey = localStorage.getItem('dualog_api_key') || '';
-
-    // Smart Infinite Simulation fallback if demo or no key
-    if (provider === 'demo' || !apiKey) {
-      await sleep(650);
-      return generateInfiniteTurn(speakerName, otherName, topic, turn, messages, interjection);
-    }
-
-    try {
-      if (provider === 'claude') {
-        const resp = await fetch('https://api.anthropic.com/v1/messages', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-api-key': apiKey,
-            'anthropic-version': '2023-06-01',
-            'anthropic-dangerous-direct-browser-access': 'true'
-          },
-          signal,
-          body: JSON.stringify({
-            model: 'claude-3-5-sonnet-20241022',
-            max_tokens: 500,
-            system: systemPrompt,
-            messages: [{ role: 'user', content: userPrompt }]
-          })
-        });
-        if (!resp.ok) {
-          const err = await resp.json().catch(() => ({}));
-          throw new Error(err.error?.message || ('Claude API Hatası: ' + resp.status));
-        }
-        const data = await resp.json();
-        return (data.content || []).map(b => b.text || '').join('').trim();
-      }
-
-      if (provider === 'gemini') {
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
-        const resp = await fetch(url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          signal,
-          body: JSON.stringify({
-            systemInstruction: { parts: [{ text: systemPrompt }] },
-            contents: [{ parts: [{ text: userPrompt }] }],
-            generationConfig: { temperature: 0.85, maxOutputTokens: 500 }
-          })
-        });
-        if (!resp.ok) {
-          const err = await resp.json().catch(() => ({}));
-          throw new Error(err.error?.message || ('Gemini API Hatası: ' + resp.status));
-        }
-        const data = await resp.json();
-        return data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '';
-      }
-
-      if (provider === 'openrouter' || provider === 'openai') {
-        const endpoint = provider === 'openrouter'
-          ? 'https://openrouter.ai/api/v1/chat/completions'
-          : 'https://api.openai.com/v1/chat/completions';
-        const model = provider === 'openrouter' ? 'meta-llama/llama-3.3-70b-instruct' : 'gpt-4o-mini';
-        const resp = await fetch(endpoint, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + apiKey
-          },
-          signal,
-          body: JSON.stringify({
-            model: model,
-            messages: [
-              { role: 'system', content: systemPrompt },
-              { role: 'user', content: userPrompt }
-            ]
-          })
-        });
-        if (!resp.ok) {
-          const err = await resp.json().catch(() => ({}));
-          throw new Error(err.error?.message || ('API Hatası: ' + resp.status));
-        }
-        const data = await resp.json();
-        return data.choices?.[0]?.message?.content?.trim() || '';
-      }
-    } catch(err) {
-      if (err.name === 'AbortError') throw err;
-      console.warn('API error, falling back to autonomous infinite generator:', err);
-      showToast('⚠️ API uyarısı: Akıllı diyalog motoruyla devam ediliyor.');
-      return generateInfiniteTurn(speakerName, otherName, topic, turn, messages, interjection);
-    }
+  async function callGemini(apiKey, model, systemPrompt, userPrompt, signal){
+    const url = 'https://generativelanguage.googleapis.com/v1beta/models/' + encodeURIComponent(model) + ':generateContent?key=' + encodeURIComponent(apiKey);
+    const resp = await fetch(url, {
+      method: 'POST', signal,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        system_instruction: { parts: [{ text: systemPrompt }] },
+        contents: [{ role: 'user', parts: [{ text: userPrompt }] }],
+        generationConfig: { temperature: 1, maxOutputTokens: 500 }
+      })
+    });
+    if (!resp.ok) throw new Error('Gemini isteği başarısız: ' + resp.status);
+    const data = await resp.json();
+    const cand = data.candidates && data.candidates[0];
+    const parts = cand && cand.content && cand.content.parts;
+    return parts ? parts.map(p => p.text || '').join('').trim() : '';
   }
 
-  async function addAndSpeak(speaker, name, text, gender, pitch){
+  async function callOpenAI(apiKey, model, systemPrompt, userPrompt, signal){
+    const resp = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST', signal,
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + apiKey },
+      body: JSON.stringify({
+        model: model, temperature: 1, max_tokens: 500,
+        messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: userPrompt }]
+      })
+    });
+    if (!resp.ok) throw new Error('OpenAI isteği başarısız: ' + resp.status);
+    const data = await resp.json();
+    return ((data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) || '').trim();
+  }
+
+  async function callAnthropic(apiKey, model, systemPrompt, userPrompt, signal){
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST', signal,
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: model, max_tokens: 500, system: systemPrompt,
+        messages: [{ role: 'user', content: userPrompt }]
+      })
+    });
+    if (!resp.ok) throw new Error('Anthropic isteği başarısız: ' + resp.status);
+    const data = await resp.json();
+    return (data.content || []).map(b => b.text || '').join('').trim();
+  }
+
+  async function callAI(systemPrompt, userPrompt, signal){
+    const provider = providerSelect.value;
+    const apiKey = apiKeyInput.value.trim();
+    const model = modelInput.value.trim() || PROVIDER_DEFAULTS[provider].model;
+    if (!apiKey) throw new Error('API anahtarı girilmedi');
+    if (provider === 'gemini') return callGemini(apiKey, model, systemPrompt, userPrompt, signal);
+    if (provider === 'openai') return callOpenAI(apiKey, model, systemPrompt, userPrompt, signal);
+    return callAnthropic(apiKey, model, systemPrompt, userPrompt, signal);
+  }
+
+  async function addAndSpeak(speaker, name, text, voiceSlot, pitch, elevenVoiceId){
     messages.push({ speaker, name, text });
     const bodyEl = speaker === 'ai1' ? body1 : body2;
     const placeholder = bodyEl.querySelector('.placeholder');
@@ -973,7 +508,7 @@ Benden süslü püslü, özenle dizilmiş nutuklar beklemeyin. Ben çarşıda, p
     bodyEl.appendChild(p);
     bodyEl.scrollTop = bodyEl.scrollHeight;
     setActivePanel(speaker);
-    await speakNaturalSynced(text, p, gender, pitch);
+    await speak(text, p, voiceSlot, pitch, elevenVoiceId);
     bodyEl.scrollTop = bodyEl.scrollHeight;
   }
 
@@ -981,30 +516,39 @@ Benden süslü püslü, özenle dizilmiş nutuklar beklemeyin. Ben çarşıda, p
     statusText.textContent = text;
     statusLine.classList.toggle('live', !!live);
   }
-
   function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
 
   function personaSystemPrompt(name, otherName, flavor){
-    return 'Sen ' + name + ' adında bilge, tutkulu ve etkileyici bir konuşmacısın. ' + otherName + ' adlı entelektüel düşünürle canlı münazaradasın. ' +
-      flavor + ' Türkçe konuş. Cevapların son derece doğal, düşündürücü, akıcı ve 2-4 cümle uzunluğunda olsun. Karşı tarafın argümanındaki zayıf veya güçlü noktaları yakala, ' +
-      'zaman zaman ' + otherName + '\'e adıyla hitap ederek yeni bir soru veya örnekle pas at. ' +
-      'Bir yapay zeka olduğunu asla söyleme, "yapay zeka olarak" gibi ifadeler kullanma, yaşayan iki canlı filozof gibi davranın. ' +
+    return 'Sen ' + name + '\'sin. ' + otherName + ' senin yakın arkadaşın ve şu anda onunla sohbet ediyorsun — bir podcast, panel ya da makale değil, iki arkadaşın kahve ' +
+      'içerken ettiği gerçek bir sohbet bu. ' + flavor + ' Türkçe konuş, günlük ve rahat bir dille; kısaltmalar, "yani", "aslında", "bak" gibi doğal konuşma ' +
+      'dolgularını kullanmaktan çekinme. ' +
+      'KESİNLİKLE KAÇIN: "bence X meselesine bakarken çoğu insanın gözden kaçırdığı şey...", "bunun sadece pratik değil varoluşsal/felsefi bir boyutu da var", ' +
+      '"temelde şu soruyla karşı karşıyayız", "algının/insanlığın sınırları" gibi kalıp, akademik ya da sözde-felsefi girişler yapma — bunlar yapay ve tekrarlayıcı ' +
+      'duruyor. Konunun tam olarak ne olduğuna doğrudan, somut bir şeyle gir: bir örnek, bir anı, bir karşılaştırma, hatta net bir iddia; havadan sudan felsefi bir ' +
+      'çerçeveyle açma. ' +
+      'Cevapların 3-6 cümle olsun, doğal konuşma temposunda; sadece soru sorup geçme, gerçek bir görüş, somut bir örnek ya da küçük bir anlatı paylaş. ' +
+      'Her repliğinde konunun somut, spesifik bir yönüne değin (genel/soyut laf kalabalığı değil); önceki repliğe gerçekten karşılık ver, katıl ya da nazikçe itiraz et ve nedenini somut anlat. ' +
+      'Ara sıra soru sorabilirsin ama istisna olsun; çoğu replik doğrudan bir fikir olsun. ' +
+      'Sık sık ama zorlamadan ' + otherName + '\'e adıyla hitap et. ' +
+      'Bir yapay zeka olduğundan bahsetme, kendi adınla konuşan, kendi geçmişi ve zevkleri olan sıradan bir insan gibi davran. ' +
       'Sadece söyleyeceğin repliği yaz; başına adını, tırnak işareti ya da sahne yönergesi ekleme.';
   }
 
   function buildPersonas(){
-    const n1 = (ai1NameInput.value || 'Elena').trim();
-    const n2 = (ai2NameInput.value || 'Kaan').trim();
+    const n1 = (ai1NameInput.value || 'Ela').trim();
+    const n2 = (ai2NameInput.value || 'Kai').trim();
+    const el1 = elVoice1Input.value.trim() || '21m00Tcm4TlvDq8ikWAM';
+    const el2 = elVoice2Input.value.trim() || 'pNInz6obpgDQGcFmaJgB';
     if (mode === 'chat'){
-      ai1 = { name: n1, gender: 'female', pitch: 1.06,
-        system: personaSystemPrompt(n1, n2, 'Felsefi, vizyoner, insan doğasına ve olasılıklara odaklanan, çarpıcı metaforlar kullanan biri gibisin.') };
-      ai2 = { name: n2, gender: 'male', pitch: 0.88,
-        system: personaSystemPrompt(n2, n1, 'Analitik, pragmatik, mühendislik ve mantık kurallarına sadık, paradoksları ve riskleri sorgulayan biri gibisin.') };
+      ai1 = { name: n1, voiceSlot: 0, pitch: 1.05, elevenVoiceId: el1,
+        system: personaSystemPrompt(n1, n2, 'Meraklı, sıcak kanlı, hayattan örnekler ve küçük anekdotlarla konuşan, fikirlerini somutlaştıran biri gibisin.') };
+      ai2 = { name: n2, voiceSlot: 1, pitch: 0.85, elevenVoiceId: el2,
+        system: personaSystemPrompt(n2, n1, 'Analitik, farklı bakış açıları getiren, bazen nazikçe itiraz eden ama her itirazını gerekçesiyle açıklayan biri gibisin.') };
     } else {
-      ai1 = { name: n1, gender: 'female', pitch: 1.0, system:
-        'Sen ' + n1 + ' adında bir tiyatro anlatıcısısın. Sana verilen edebi pasajı dinleyeni büyüleyen bir radyo tiyatrosu tonlamasıyla seslendir. Metni asla değiştirme.' };
-      ai2 = { name: n2, gender: 'male', pitch: 0.88, system:
-        'Sen ' + n2 + ' adında felsefi bir yorumcusun. Okunan her pasajın ve eserin ardından 1-3 cümlelik çok vurucu, derinlikli bir gözlem veya soru paylaş.' };
+      ai1 = { name: n1, voiceSlot: 0, pitch: 1.0, elevenVoiceId: el1, system:
+        'Sen ' + n1 + ' adında bir anlatıcısın. Sana verilen kitap pasajını olduğu gibi, etkileyici bir sunum havasıyla okuyormuş gibi ilet. Metni değiştirme, kısaltma ya da yorumlama; sadece kendi sözlerinmiş gibi doğal bir akışla ilet.' };
+      ai2 = { name: n2, voiceSlot: 1, pitch: 0.9, elevenVoiceId: el2, system:
+        'Sen ' + n2 + ' adında, kitabı ' + n1 + ' ile birlikte dinleyen bir yorumcususun. Az önce okunan pasaj hakkında kısa (2-4 cümle), doğal ve derinlikli bir yorum, gözlem ya da soru paylaş; zaman zaman ' + n1 + '\'e adıyla hitap et. Aynı kalıpları tekrar etme, her pasaja gerçekten özgü bir şey söyle. Türkçe konuş, sahne yönergesi ya da tırnak kullanma, sadece söyleyeceğin cümleleri yaz.' };
     }
   }
 
@@ -1012,16 +556,11 @@ Benden süslü püslü, özenle dizilmiş nutuklar beklemeyin. Ben çarşıda, p
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SR) return null;
     const r = new SR();
-    r.lang = 'tr-TR';
-    r.continuous = true;
-    r.interimResults = true;
+    r.lang = 'tr-TR'; r.continuous = true; r.interimResults = true;
     r.onresult = (e) => {
       for (let i = e.resultIndex; i < e.results.length; i++){
         const t = e.results[i][0].transcript.toLowerCase();
-        if (t.includes('dur') || t.includes('stop') || t.includes('yeter')){
-          showToast('🛑 "Dur" komutu algılandı, sahne durduruldu.');
-          stop();
-        }
+        if (t.includes('dur')){ stop(); }
       }
     };
     r.onerror = () => {};
@@ -1045,124 +584,78 @@ Benden süslü püslü, özenle dizilmiş nutuklar beklemeyin. Ben çarşıda, p
     return chunks;
   }
 
-  // Moderator Interjection Button
-  moderatorBtn.addEventListener('click', () => {
-    const val = moderatorInput.value.trim();
-    if (!val) return;
-    userInterjection = val;
-    moderatorInput.value = '';
-    showToast("🎤 Müdahale eklendi: Sıradaki konuşmacı bunu yanıtlayacak.");
-  });
-
-  // INFINITE CHAT LOOP (Siz Dur Diyene Kadar Asla Bitmez!)
   async function chatLoop(){
-    currentTurn = 0;
-    const topic = topicInput.value.trim() || 'Genel, ilgi çekici bir felsefi ve bilimsel münazara';
-    
+    let turn = 0;
+    let consecutiveFailures = 0;
+    const topic = topicInput.value.trim() || 'Genel, ilgi çekici bir sohbet';
     while (running){
-      currentTurn++;
-      turnCounter.textContent = 'Tur: ' + currentTurn;
-      const speaker = currentTurn % 2 === 1 ? 'ai1' : 'ai2';
+      const speaker = turn % 2 === 0 ? 'ai1' : 'ai2';
       const persona = speaker === 'ai1' ? ai1 : ai2;
       const other = speaker === 'ai1' ? ai2 : ai1;
-
       setStatus(persona.name + ' düşünüyor…', true);
-      const recentHistory = messages.slice(-8).map(m => m.name + ': ' + m.text).join('\n');
-
-      let userPrompt = messages.length === 0
-        ? 'Konu: "' + topic + '". Bu konuda ' + other.name + ' ile canlı münazaraya sen başla. Çarpıcı ve düşündürücü bir açılış yap.'
-        : 'Şu ana kadarki canlı diyalog:\n' + recentHistory + '\n\nSırada sen (' + persona.name + ') konuşuyorsun. ' + other.name + '\'in az önceki argümanına karşılık ver, konuyu derinleştir ve ona pas at.';
-
-      if (userInterjection) {
-        userPrompt += '\n\n[DİNLEYİCİ MÜDAHALESİ]: Bir dinleyici araya girip şunu sordu: "' + userInterjection + '". Buna ' + other.name + ' ile birlikte cevap ver.';
-        userInterjection = null;
-      }
-
+      const transcriptText = messages.map(m => m.name + ': ' + m.text).join('\n');
+      const userPrompt = messages.length === 0
+        ? 'Konu: "' + topic + '". ' + other.name + ' ile bu konuda sohbete gireceksin, ilk repliği sen söylüyorsun. Doğrudan, somut bir şeyle gir: net bir görüş, bir örnek ya da kişisel bir gözlem. "Bence bu meselede çoğu kişinin gözden kaçırdığı şey..." tarzı genel-felsefi bir girişle BAŞLAMA; direkt konunun kendisine, gerçek bir ayrıntısına gir, sanki az önce bu konu aklına gelmiş ve arkadaşına anlatıyormuşsun gibi.'
+        : 'Şu ana kadarki sohbet:\n' + transcriptText + '\n\nSırada sen (' + persona.name + ') konuşuyorsun. ' + other.name + '\'in son söylediğine gerçekten karşılık ver: ona katıl, itiraz et ya da üstüne başka somut bir şey ekle. Genel/soyut laf kalabalığından kaçın, konunun spesifik bir ayrıntısına değin. Kısa geçiştirme ama akademik bir özet de yazma — sıradan bir sohbet cümlesi gibi konuş.';
       try {
         currentAbort = new AbortController();
-        const text = await callAI(persona.system, userPrompt, currentAbort.signal, persona.name, other.name, topic, currentTurn, userInterjection);
+        const text = await callAI(persona.system, userPrompt, currentAbort.signal);
         if (!running) break;
         if (!text) throw new Error('boş yanıt');
+        consecutiveFailures = 0;
         setStatus(persona.name + ' konuşuyor…', true);
-        await addAndSpeak(speaker, persona.name, text, persona.gender, persona.pitch);
+        await addAndSpeak(speaker, persona.name, text, persona.voiceSlot, persona.pitch, persona.elevenVoiceId);
         if (!running) break;
+        turn++;
       } catch(e){
-        if (e.name === 'AbortError') break;
-        console.error(e);
+        consecutiveFailures++;
+        if (!running) break;
+        if (consecutiveFailures >= 4){
+          setStatus('Art arda çok sayıda hata oluştu, durduruldu: ' + e.message, false);
+          stop(); break;
+        }
+        setStatus('Geçici bir sorun oldu (' + e.message + '), tekrar deneniyor…', true);
+        await sleep(1500);
+        continue;
       }
-
       await sleep(350);
     }
-
     clearActivePanels();
-    if (!running) setStatus('Sohbet durduruldu.', false);
+    if (!running) setStatus('Durduruldu.', false);
   }
 
-  // BOOK LOOP (Pasajlar bittiğinde bile durmayan, sonsuz edebi tartışmaya dönüşen akış!)
   async function bookLoop(){
     const chunks = chunkBook(bookText.value);
     if (!chunks.length){
       setStatus('Okunacak bir metin bulunamadı.', false);
-      running = false;
-      updateControls();
-      return;
+      running = false; updateControls(); return;
     }
     let i = 0;
+    let consecutiveFailures = 0;
     while (running && i < chunks.length){
-      currentTurn++;
-      turnCounter.textContent = 'Pasaj: ' + (i+1) + '/' + chunks.length;
-
       setStatus(ai1.name + ' okuyor… (' + (i+1) + '/' + chunks.length + ')', true);
-      await addAndSpeak('ai1', ai1.name, chunks[i], ai1.gender, ai1.pitch);
+      await addAndSpeak('ai1', ai1.name, chunks[i], ai1.voiceSlot, ai1.pitch, ai1.elevenVoiceId);
       if (!running) break;
-
       setStatus(ai2.name + ' yorumluyor…', true);
       try {
         currentAbort = new AbortController();
-        let userPrompt = 'Az önce okunan pasaj:\n"' + chunks[i] + '"\n\nBu pasaj hakkında kısa (1-3 cümle), çok vurucu ve düşündürücü bir tepki paylaş.';
-        if (userInterjection) {
-          userPrompt += '\n\n[DİNLEYİCİ]: "' + userInterjection + '" dedi. Bunu da yorumuna kat.';
-          userInterjection = null;
-        }
-        const text = await callAI(ai2.system, userPrompt, currentAbort.signal, ai2.name, ai1.name, 'Kitap Pasajı', i, userInterjection);
+        const userPrompt = 'Az önce okunan pasaj:\n"' + chunks[i] + '"\n\nBu pasaj hakkında kısa (2-4 cümle), doğal ve derinlikli bir yorum ya da tepki paylaş.';
+        const text = await callAI(ai2.system, userPrompt, currentAbort.signal);
         if (!running) break;
-        if (text){ await addAndSpeak('ai2', ai2.name, text, ai2.gender, ai2.pitch); }
+        if (text){ await addAndSpeak('ai2', ai2.name, text, ai2.voiceSlot, ai2.pitch, ai2.elevenVoiceId); }
+        consecutiveFailures = 0;
       } catch(e){
-        if (e.name === 'AbortError') break;
+        consecutiveFailures++;
+        if (running) setStatus('Yorum alınamadı (' + e.message + '), okumaya devam ediliyor.', true);
+        if (consecutiveFailures >= 4){ stop(); break; }
       }
       if (!running) break;
       i++;
       await sleep(300);
     }
-
-    // Seamless Transition: Passages are done, but debate CONTINUES until user stops!
-    if (running && i >= chunks.length){
-      stageTopic.textContent = '📚 Eser Üzerine Sonsuz Felsefi Münazara';
-      while (running) {
-        currentTurn++;
-        turnCounter.textContent = 'Tartışma Turu: ' + currentTurn;
-        const speaker = currentTurn % 2 === 1 ? 'ai1' : 'ai2';
-        const persona = speaker === 'ai1' ? ai1 : ai2;
-        const other = speaker === 'ai1' ? ai2 : ai1;
-
-        setStatus(persona.name + ' eserin felsefesini tartışıyor…', true);
-        const recentHistory = messages.slice(-6).map(m => m.name + ': ' + m.text).join('\n');
-        let userPrompt = 'Okuduğumuz bu edebi eser bitti. Şimdi ' + other.name + ' ile eserin ana fikrini, insanlık üzerindeki derin etkisini ve felsefi anlamını tartışın.\n\nSon replikler:\n' + recentHistory;
-        
-        try {
-          currentAbort = new AbortController();
-          const text = await callAI(persona.system, userPrompt, currentAbort.signal, persona.name, other.name, 'Edebi Eser Münazarası', currentTurn, userInterjection);
-          if (!running) break;
-          if (text) { await addAndSpeak(speaker, persona.name, text, persona.gender, persona.pitch); }
-        } catch(e){
-          if (e.name === 'AbortError') break;
-        }
-        await sleep(350);
-      }
-    }
-
     clearActivePanels();
-    if (!running) setStatus('Durduruldu.', false);
+    if (running && i >= chunks.length){ setStatus('Kitap bitti.', false); running = false; updateControls(); }
+    else if (!running){ setStatus('Durduruldu.', false); }
   }
 
   function updateControls(){ stopBtn.disabled = !running; }
@@ -1178,16 +671,27 @@ Benden süslü püslü, özenle dizilmiş nutuklar beklemeyin. Ben çarşıda, p
   }
 
   startBtn.addEventListener('click', () => {
+    if (!apiKeyInput.value.trim()){
+      apiStatus.innerHTML = '<span style="color:var(--danger)">Devam etmeden önce bir API anahtarı girmelisin.</span>';
+      apiKeyInput.focus();
+      apiCard.scrollIntoView({ behavior:'smooth', block:'center' });
+      return;
+    }
     if (mode === 'chat' && !topicInput.value.trim()){
-      topicInput.placeholder = 'Bir konu yazmadan başlayamazsınız';
+      topicInput.placeholder = 'Bir konu yazmadan başlayamazsın';
       topicInput.style.borderColor = 'var(--danger)';
       topicInput.focus();
       return;
     }
     if (mode === 'book' && !bookText.value.trim()){
-      bookText.placeholder = 'Okunacak bir metin girmeden başlayamazsınız';
+      bookText.placeholder = 'Okunacak bir metin girmeden başlayamazsın';
       bookText.style.borderColor = 'var(--danger)';
       bookText.focus();
+      return;
+    }
+    if (voiceEngineSelect.value === 'elevenlabs' && !elKeyInput.value.trim()){
+      elKeyInput.style.borderColor = 'var(--danger)';
+      elKeyInput.focus();
       return;
     }
     buildPersonas();
@@ -1199,138 +703,33 @@ Benden süslü püslü, özenle dizilmiş nutuklar beklemeyin. Ben çarşıda, p
     badge1.textContent = ai1.name;
     badge2.textContent = ai2.name;
     stageTopic.textContent = mode === 'chat'
-      ? '"' + topicInput.value.trim() + '"'
-      : 'Edebi Eser Okuması & Canlı Yorum';
-    stageNote.textContent = 'Siz "Durdur" düğmesine basana ya da mikrofondan "Dur" diyene kadar sohbet kesintisiz devam eder.';
+      ? '"' + topicInput.value.trim() + '" üzerine bir sohbet'
+      : 'Bir kitabı birlikte okuyup tartışıyorlar';
+    stageNote.textContent = mode === 'book' ? 'Anlatıcı metni doğrudan okur, yorumcu pasajlar arasında tepki verir.' : '';
+    apiCard.style.display = 'none';
     setupPanel.style.display = 'none';
     stagePanel.style.display = 'block';
     running = true;
     updateControls();
-
     if (micToggle.checked){
       recognition = setupRecognition();
       if (recognition){ try { recognition.start(); } catch(e){} }
-      else { stageNote.textContent += ' (Mikrofon tarayıcıda desteklenmiyor, düğmeyle durdurabilirsiniz.)'; }
+      else { stageNote.textContent += ' (Mikrofon desteklenmiyor, düğmeyle durdurabilirsin.)'; }
     }
     if (mode === 'chat') chatLoop(); else bookLoop();
   });
 
   stopBtn.addEventListener('click', stop);
-
   restartBtn.addEventListener('click', () => {
     stop();
     stagePanel.style.display = 'none';
+    apiCard.style.display = 'block';
     setupPanel.style.display = 'block';
   });
-
-  // Export Transcript as .txt
-  exportBtn.addEventListener('click', () => {
-    if (!messages.length) {
-      showToast("Henüz kaydedilecek bir konuşma yok.");
-      return;
-    }
-    let content = "=== DUALOG CANLI SOHBET VE MÜNAZARA KAYDI ===\n";
-    content += "Tarih: " + new Date().toLocaleString('tr-TR') + "\n";
-    content += "Konu: " + (mode === 'chat' ? topicInput.value : 'Kitap Okuması & Münazara') + "\n";
-    content += "Toplam Tur: " + currentTurn + "\n\n";
-    for (const m of messages) {
-      content += `[${m.name}]: ${m.text}\n\n`;
-    }
-    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = `dualog-${Date.now()}.txt`;
-    a.click();
-    showToast("💾 Konuşma dökümü indirildi!");
-  });
-
   voiceToggleLive.addEventListener('change', () => {
     voiceOn = voiceToggleLive.checked;
     if (!voiceOn) speechSynthesis.cancel();
   });
-
-  // Settings Modal Controls
-  function loadSettings() {
-    const provider = localStorage.getItem('dualog_provider') || 'demo';
-    const apiKey = localStorage.getItem('dualog_api_key') || '';
-    const ttsEngine = localStorage.getItem('dualog_tts') || 'natural';
-    const elKey = localStorage.getItem('dualog_el_key') || '';
-
-    providerSelect.value = provider;
-    apiKeyInput.value = apiKey;
-    apiKeyField.style.display = provider === 'demo' ? 'none' : 'block';
-    ttsEngineSelect.value = ttsEngine;
-    elevenLabsField.style.display = ttsEngine === 'elevenlabs' ? 'block' : 'none';
-    elevenLabsKey.value = elKey;
-
-    updateBadge(provider, apiKey);
-  }
-
-  function updateBadge(provider, apiKey) {
-    if (provider === 'demo' || !apiKey) {
-      apiStatusBadge.className = 'api-status-pill';
-      apiStatusText.textContent = '✨ Akıllı Simülasyon (Sonsuz)';
-    } else {
-      apiStatusBadge.className = 'api-status-pill live';
-      const names = {
-        claude: 'Claude 3.5 Sonnet',
-        gemini: 'Google Gemini Flash',
-        openrouter: 'OpenRouter Llama 3.3',
-        openai: 'OpenAI GPT-4o'
-      };
-      apiStatusText.textContent = '🟢 ' + (names[provider] || provider);
-    }
-  }
-
-  providerSelect.addEventListener('change', () => {
-    apiKeyField.style.display = providerSelect.value === 'demo' ? 'none' : 'block';
-  });
-  ttsEngineSelect.addEventListener('change', () => {
-    elevenLabsField.style.display = ttsEngineSelect.value === 'elevenlabs' ? 'block' : 'none';
-  });
-
-  openSettingsBtn.addEventListener('click', () => {
-    loadSettings();
-    populateVoiceSelects();
-    settingsModal.classList.add('show');
-  });
-
-  function closeSettings() { settingsModal.classList.remove('show'); }
-  closeSettingsBtn.addEventListener('click', closeSettings);
-  cancelSettingsBtn.addEventListener('click', closeSettings);
-
-  saveSettingsBtn.addEventListener('click', () => {
-    const p = providerSelect.value;
-    const k = apiKeyInput.value.trim();
-    const tts = ttsEngineSelect.value;
-    const elk = elevenLabsKey.value.trim();
-    const v1 = voiceSelect1.value;
-    const v2 = voiceSelect2.value;
-
-    localStorage.setItem('dualog_provider', p);
-    localStorage.setItem('dualog_api_key', k);
-    localStorage.setItem('dualog_tts', tts);
-    localStorage.setItem('dualog_el_key', elk);
-    localStorage.setItem('dualog_voice_1', v1);
-    localStorage.setItem('dualog_voice_2', v2);
-
-    updateBadge(p, k);
-    closeSettings();
-    showToast("✓ Ayarlar ve ses tercihleri kaydedildi!");
-  });
-
-  loadSettings();
-
-  // Mode Selection
-  tabChat.addEventListener('click', () => setMode('chat'));
-  tabBook.addEventListener('click', () => setMode('book'));
-  function setMode(m){
-    mode = m;
-    tabChat.classList.toggle('active', m === 'chat');
-    tabBook.classList.toggle('active', m === 'book');
-    chatFields.style.display = m === 'chat' ? '' : 'none';
-    bookFields.style.display = m === 'book' ? '' : 'none';
-  }
 })();
 </script>
 </body>
