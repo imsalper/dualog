@@ -127,14 +127,15 @@
     <div class="field">
       <label class="field-label" for="providerSelect">Motor</label>
       <select id="providerSelect">
-        <option value="gemini">Google Gemini — önerilen, ücretsiz kotası var</option>
-        <option value="openai">OpenAI (GPT)</option>
-        <option value="anthropic">Anthropic (Claude)</option>
+        <option value="auto">Otomatik — ücretsiz, anahtar gerekmez</option>
+        <option value="gemini">Google Gemini (kendi anahtarınla)</option>
+        <option value="openai">OpenAI — GPT (kendi anahtarınla)</option>
+        <option value="anthropic">Anthropic — Claude (kendi anahtarınla)</option>
       </select>
       <div class="hint" id="providerHint"></div>
     </div>
     <div class="row2">
-      <div class="field">
+      <div class="field" id="apiKeyField">
         <label class="field-label" for="apiKeyInput">API anahtarı</label>
         <input type="password" id="apiKeyInput" placeholder="API anahtarını yapıştır" />
       </div>
@@ -254,10 +255,13 @@
     set(k, v){ try{ localStorage.setItem(k, v); }catch(e){} }
   };
 
+  const PROXY_URL = 'https://cool-frog-4829.imsalper.workers.dev';
+
   const PROVIDER_DEFAULTS = {
-    gemini:   { model: 'gemini-2.0-flash', hint: 'Ücretsiz anahtar: <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a>. Tarayıcıdan doğrudan çağrıya en uygun motor budur.' },
-    openai:   { model: 'gpt-4o-mini', hint: 'platform.openai.com üzerinden anahtar alınır. Bazı hesap/ağ yapılandırmalarında tarayıcıdan doğrudan istek CORS hatası verebilir.' },
-    anthropic:{ model: 'claude-3-5-sonnet-latest', hint: 'console.anthropic.com üzerinden anahtar alınır. Bazı ağlarda tarayıcıdan doğrudan istek CORS hatası verebilir.' }
+    auto:     { model: 'gpt-4o-mini', hint: 'Anahtar gerekmez — bu site için hazır bir bağlantı üzerinden çalışır. En kolay seçenek budur.' },
+    gemini:   { model: 'gemini-flash-lite-latest', hint: 'Ücretsiz anahtar: <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a>.' },
+    openai:   { model: 'gpt-4o-mini', hint: 'platform.openai.com üzerinden kendi anahtarınla kullanmak istersen buraya geç.' },
+    anthropic:{ model: 'claude-3-5-sonnet-latest', hint: 'console.anthropic.com üzerinden kendi anahtarınla kullanmak istersen buraya geç.' }
   };
 
   const providerSelect = $('providerSelect'), apiKeyInput = $('apiKeyInput'), modelInput = $('modelInput');
@@ -270,14 +274,19 @@
       modelInput.value = PROVIDER_DEFAULTS[p].model;
     }
     LS.set('dualog_provider', p);
+    $('apiKeyField').style.display = p === 'auto' ? 'none' : '';
     updateApiStatus();
   }
   function updateApiStatus(){
+    if (providerSelect.value === 'auto'){
+      apiStatus.innerHTML = '<span class="ok-badge"><span class="dot"></span>Hazır, herhangi bir şey girmene gerek yok.</span>';
+      return;
+    }
     apiStatus.innerHTML = apiKeyInput.value.trim()
       ? '<span class="ok-badge"><span class="dot"></span>Anahtar girildi, gerçek yanıtlar kullanılacak.</span>'
       : 'Anahtar girmeden başlatırsan sahne açılmaz.';
   }
-  providerSelect.value = LS.get('dualog_provider', 'gemini');
+  providerSelect.value = LS.get('dualog_provider', 'auto');
   apiKeyInput.value = LS.get('dualog_apikey', '');
   modelInput.value = LS.get('dualog_model', '') || PROVIDER_DEFAULTS[providerSelect.value].model;
   refreshProviderUI();
@@ -488,10 +497,25 @@
     return (data.content || []).map(b => b.text || '').join('').trim();
   }
 
+  async function callAuto(model, systemPrompt, userPrompt, signal){
+    const resp = await fetch(PROXY_URL, {
+      method: 'POST', signal,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: model, temperature: 1, max_tokens: 500,
+        messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: userPrompt }]
+      })
+    });
+    if (!resp.ok) throw new Error('Sunucu isteği başarısız: ' + resp.status);
+    const data = await resp.json();
+    return ((data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) || '').trim();
+  }
+
   async function callAI(systemPrompt, userPrompt, signal){
     const provider = providerSelect.value;
-    const apiKey = apiKeyInput.value.trim();
     const model = modelInput.value.trim() || PROVIDER_DEFAULTS[provider].model;
+    if (provider === 'auto') return callAuto(model, systemPrompt, userPrompt, signal);
+    const apiKey = apiKeyInput.value.trim();
     if (!apiKey) throw new Error('API anahtarı girilmedi');
     if (provider === 'gemini') return callGemini(apiKey, model, systemPrompt, userPrompt, signal);
     if (provider === 'openai') return callOpenAI(apiKey, model, systemPrompt, userPrompt, signal);
@@ -681,7 +705,7 @@
   }
 
   startBtn.addEventListener('click', () => {
-    if (!apiKeyInput.value.trim()){
+    if (providerSelect.value !== 'auto' && !apiKeyInput.value.trim()){
       apiStatus.innerHTML = '<span style="color:var(--danger)">Devam etmeden önce bir API anahtarı girmelisin.</span>';
       apiKeyInput.focus();
       apiCard.scrollIntoView({ behavior:'smooth', block:'center' });
@@ -741,3 +765,6 @@
     if (!voiceOn) forceStopSpeech();
   });
 })();
+</script>
+</body>
+</html>
