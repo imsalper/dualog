@@ -660,11 +660,21 @@
 
   function updateControls(){ stopBtn.disabled = !running; }
 
+  function forceStopSpeech(){
+    try {
+      if (speechSynthesis.paused) speechSynthesis.resume();
+      speechSynthesis.cancel();
+    } catch(e){}
+    // Chrome sometimes ignores a single cancel() call mid-utterance; a second
+    // call shortly after reliably finishes the job.
+    setTimeout(() => { try { speechSynthesis.cancel(); } catch(e){} }, 50);
+  }
+
   function stop(){
     if (!running) return;
     running = false;
     if (currentAbort) { try { currentAbort.abort(); } catch(e){} }
-    speechSynthesis.cancel();
+    forceStopSpeech();
     if (recognition) { try { recognition.stop(); } catch(e){} }
     clearActivePanels();
     updateControls();
@@ -728,9 +738,6 @@
   });
   voiceToggleLive.addEventListener('change', () => {
     voiceOn = voiceToggleLive.checked;
-    if (!voiceOn) speechSynthesis.cancel();
+    if (!voiceOn) forceStopSpeech();
   });
 })();
-</script>
-</body>
-</html>
